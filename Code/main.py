@@ -1,8 +1,12 @@
 import h5py
 import numpy as np
 from matplotlib import pyplot as plt
-import sklearn
 import time
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import confusion_matrix, accuracy_score
 
 print("Initializing...")
 sarsmerscov_train = h5py.File('D:\\ORNL_Code_Data\\sars-mers-cov2_train.h5', 'r')
