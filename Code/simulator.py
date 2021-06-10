@@ -193,12 +193,12 @@ if __name__ == '__main__':
     plt.show() # plotting each sample data to see contact maps
 
     print(str(time.ctime()) + ": Implementing PCA Clustering...")
-    # reduced_train_2D, reduced_val_2D = pca(trainset, valset, 2)
+    reduced_train_2D, reduced_val_2D = pca(trainset, valset, 2)
     reduced_train_3D, reduced_val_3D = pca(trainset, valset, 3)
     print(str(time.ctime()) + ": Finished PCA Clustering!")
 
     print(str(time.ctime()) + ": Plotting PCA...")
-    # plotPCA_2D(reduced_train_2D, reduced_val_2D, traintxt, valtxt)
+    plotPCA_2D(reduced_train_2D, reduced_val_2D, traintxt, valtxt)
     plotPCA_3D(reduced_train_3D, reduced_val_3D, traintxt, valtxt)
     print(str(time.ctime()) + ": Finished PCA Plotting!")
     plt.show() # after PCA clustering plot the first n PCs to see clusters
@@ -207,11 +207,11 @@ if __name__ == '__main__':
     epochs = 20
     batch_size = 128
     model = Sequential()
-    model.add(Dense(64, activation='relu', input_shape=(reduced_train_3D.shape[1],)))
+    model.add(Dense(64, activation='relu', input_shape=(reduced_train_2D.shape[1],)))
     model.add(Dense(64, activation='relu'))
     model.add(Dense(32, activation='relu'))
     model.add(Dense(16, activation='relu'))
 
     model.compile(loss='mse', optimizer=Adam(learning_rate=0.0005), metrics=['accuracy'])
-    history = model.fit(reduced_train_3D, batch_size=batch_size, epochs=epochs, validation_data=reduced_val_3D)
+    history = model.fit(reduced_train_2D, batch_size=batch_size, epochs=epochs, validation_data=reduced_val_2D)
     print(str(time.ctime()) + ": Finished Machine Learning!")
