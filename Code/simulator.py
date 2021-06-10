@@ -12,6 +12,9 @@ import time
 from sklearn.preprocessing import normalize
 from sklearn.decomposition import PCA
 from mpl_toolkits import mplot3d
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras import Sequential
 
 def dataLoading():
     sarsmerscov_train = h5py.File('D:\\ORNL_Code_Data\\sars-mers-cov2_train.h5', 'r')
@@ -184,16 +187,31 @@ if __name__ == '__main__':
     trainset, valset, traintxt, valtxt = dataLoading()
     print(str(time.ctime()) + ": Successfully loaded all data sets!")
 
-    # print(str(time.ctime()) + ": Plotting...")
-    # rawDataPlotting(trainset, valset)
-    # print(str(time.ctime()) + ": Finished Plotting!")
-    # plt.show() # plotting each sample data to see contact maps
+    print(str(time.ctime()) + ": Plotting contact maps...")
+    rawDataPlotting(trainset, valset)
+    print(str(time.ctime()) + ": Finished Plotting!")
+    plt.show() # plotting each sample data to see contact maps
 
-    print(str(time.ctime()) + ": Initializing PCA Clustering...")
-    reduced_train_2D, reduced_val_2D = pca(trainset, valset, 2)
+    print(str(time.ctime()) + ": Implementing PCA Clustering...")
+    # reduced_train_2D, reduced_val_2D = pca(trainset, valset, 2)
     reduced_train_3D, reduced_val_3D = pca(trainset, valset, 3)
-    print(str(time.ctime()) + ": Plotting PCA...")
-    plotPCA_2D(reduced_train_2D, reduced_val_2D, traintxt, valtxt)
-    plotPCA_3D(reduced_train_3D, reduced_val_3D, traintxt, valtxt)
-    plt.show() # after PCA clustering plot the first 2 PCs to see clusters
     print(str(time.ctime()) + ": Finished PCA Clustering!")
+
+    print(str(time.ctime()) + ": Plotting PCA...")
+    # plotPCA_2D(reduced_train_2D, reduced_val_2D, traintxt, valtxt)
+    plotPCA_3D(reduced_train_3D, reduced_val_3D, traintxt, valtxt)
+    print(str(time.ctime()) + ": Finished PCA Plotting!")
+    plt.show() # after PCA clustering plot the first n PCs to see clusters
+
+    print(str(time.ctime()) + ": Implementing Machine Learning...")
+    epochs = 20
+    batch_size = 128
+    model = Sequential()
+    model.add(Dense(64, activation='relu', input_shape=(reduced_train_3D.shape[1],)))
+    model.add(Dense(64, activation='relu'))
+    model.add(Dense(32, activation='relu'))
+    model.add(Dense(16, activation='relu'))
+
+    model.compile(loss='mse', optimizer=Adam(learning_rate=0.0005), metrics=['accuracy'])
+    history = model.fit(reduced_train_3D, batch_size=batch_size, epochs=epochs, validation_data=reduced_val_3D)
+    print(str(time.ctime()) + ": Finished Machine Learning!")
