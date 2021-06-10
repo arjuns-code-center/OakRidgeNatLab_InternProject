@@ -9,12 +9,13 @@ import h5py
 import numpy as np
 from matplotlib import pyplot as plt
 import time
-from sklearn.preprocessing import normalize, StandardScaler
+from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans
 from mpl_toolkits import mplot3d
-from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import Conv2D, MaxPool2D, BatchNormalization, UpSampling2D
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras import Sequential
+from tensorflow.keras import Input, Model
 
 def dataLoading():
     sarsmerscov_train = h5py.File('D:\\ORNL_Code_Data\\sars-mers-cov2_train.h5', 'r')
@@ -48,16 +49,16 @@ def pca(train, val, numComponents):
     train_pca = np.resize(train, (train.shape[0], int((train.shape[1] * train.shape[2]) / 2)))  # 616207 x 288
     val_pca = np.resize(val, (val.shape[0], int((val.shape[1] * val.shape[2]) / 2)))  # 152052 x 288
 
-    pca_train = PCA(n_components=numComponents)  # define number of principle components needed
     sc = StandardScaler()
-    normalized_train_pca = sc.fit_transform(train_pca)  # normalize
-    normalized_train_pca = pca_train.fit_transform(normalized_train_pca)
-    # print(pca_train.explained_variance_ratio_)  # find how much of variance is explained by each component
+    sc.fit(train_pca) # fit the scaler to the validation set
+    normalized_train_pca = sc.transform(train_pca)
+    normalized_val_pca = sc.transform(val_pca)  # normalize both sets
 
-    pca_val = PCA(n_components=numComponents)
-    normalized_val_pca = sc.fit_transform(val_pca)  # normalize
-    normalized_val_pca = pca_val.fit_transform(normalized_val_pca)
-    # print(pca_val.explained_variance_ratio_)  # find how much of variance is explained by each component
+    pca = PCA(n_components=numComponents)  # define number of principle components needed
+    pca.fit(normalized_train_pca) # fit pca to validation set
+    normalized_train_pca = pca.transform(normalized_train_pca)
+    normalized_val_pca = pca.transform(normalized_val_pca) # reduce dimensions of both sets
+    # print(pca.explained_variance_ratio_)  # find how much of variance is explained by each component
 
     return normalized_train_pca, normalized_val_pca
 
@@ -80,9 +81,9 @@ def plotPCA_2D(reduced_t, reduced_v, txt_t, txt_v):
         elif num == 2:
             t_rows_sars = np.append(t_rows_sars, reduced_t[sample, 0])
             t_cols_sars = np.append(t_cols_sars, reduced_t[sample, 1])
-    plt.scatter(t_rows_sars, t_cols_sars, c='b', label='SARS')
-    plt.scatter(t_rows_mers, t_cols_mers, c='r', label='MERS')
-    plt.scatter(t_rows_covid, t_cols_covid, c='k', label='COVID')
+    plt.scatter(t_rows_sars, t_cols_sars, c='b', label='SARS', alpha=1)
+    plt.scatter(t_rows_mers, t_cols_mers, c='r', label='MERS', alpha=1)
+    plt.scatter(t_rows_covid, t_cols_covid, c='g', label='COVID', alpha=1)
     plt.legend(loc='upper right')
     plt.xlabel('Principal Component 1')
     plt.ylabel('Principal Component 2')
@@ -106,9 +107,9 @@ def plotPCA_2D(reduced_t, reduced_v, txt_t, txt_v):
         elif num == 2:
             v_rows_sars = np.append(v_rows_sars, reduced_v[sample, 0])
             v_cols_sars = np.append(v_cols_sars, reduced_v[sample, 1])
-    plt.scatter(v_rows_sars, v_cols_sars, c='b', label='SARS')
-    plt.scatter(v_rows_mers, v_cols_mers, c='r', label='MERS')
-    plt.scatter(v_rows_covid, v_cols_covid, c='k', label='COVID')
+    plt.scatter(v_rows_sars, v_cols_sars, c='b', label='SARS', alpha=1)
+    plt.scatter(v_rows_mers, v_cols_mers, c='r', label='MERS', alpha=1)
+    plt.scatter(v_rows_covid, v_cols_covid, c='g', label='COVID', alpha=1)
     plt.legend(loc='upper right')
     plt.xlabel('Principal Component 1')
     plt.ylabel('Principal Component 2')
@@ -140,9 +141,9 @@ def plotPCA_3D(reduced_t, reduced_v, txt_t, txt_v):
             t_x_sars = np.append(t_x_sars, reduced_t[sample, 0])
             t_y_sars = np.append(t_y_sars, reduced_t[sample, 1])
             t_z_sars = np.append(t_z_sars, reduced_t[sample, 2])
-    ax.scatter3D(t_x_sars, t_y_sars, t_z_sars, c='b', label='SARS')
-    ax.scatter3D(t_x_mers, t_y_mers, t_z_mers, c='r', label='MERS')
-    ax.scatter3D(t_x_covid, t_y_covid, t_z_covid, c='k', label='COVID')
+    ax.scatter3D(t_x_sars, t_y_sars, t_z_sars, c='b', label='SARS', alpha=1)
+    ax.scatter3D(t_x_mers, t_y_mers, t_z_mers, c='r', label='MERS', alpha=1)
+    ax.scatter3D(t_x_covid, t_y_covid, t_z_covid, c='g', label='COVID', alpha=1)
     plt.legend(loc='upper right')
     ax.set_xlabel('Principal Component 1')
     ax.set_ylabel('Principal Component 2')
@@ -174,47 +175,112 @@ def plotPCA_3D(reduced_t, reduced_v, txt_t, txt_v):
             v_x_sars = np.append(v_x_sars, reduced_v[sample, 0])
             v_y_sars = np.append(v_y_sars, reduced_v[sample, 1])
             v_z_sars = np.append(v_z_sars, reduced_v[sample, 2])
-    ax2.scatter3D(v_x_sars, v_y_sars, v_z_sars, c='b', label='SARS')
-    ax2.scatter3D(v_x_mers, v_y_mers, v_z_mers, c='r', label='MERS')
-    ax2.scatter3D(v_x_covid, v_y_covid, v_z_covid, c='k', label='COVID')
+    ax2.scatter3D(v_x_sars, v_y_sars, v_z_sars, c='b', label='SARS', alpha=1)
+    ax2.scatter3D(v_x_mers, v_y_mers, v_z_mers, c='r', label='MERS', alpha=1)
+    ax2.scatter3D(v_x_covid, v_y_covid, v_z_covid, c='g', label='COVID', alpha=1)
     plt.legend(loc='upper right')
     ax2.set_xlabel('Principal Component 1')
     ax2.set_ylabel('Principal Component 2')
     ax2.set_zlabel('Principal Component 3')
     plt.title('Scatter plot showing PCA clustering for validation dataset')
 
+def kmeans(train, val):
+    km = KMeans(n_clusters=3, random_state=0)
+    labels_train = np.array(km.fit_predict(train))
+    labels_val = np.array(km.fit_predict(val))
+    return labels_train, labels_val
+
+def plotKMeans_2D(train, val, t_labels, v_labels):
+    t_label0 = train[np.where(t_labels == 0)]
+    t_label1 = train[np.where(t_labels == 1)]
+    t_label2 = train[np.where(t_labels == 2)]
+
+    v_label0 = val[np.where(v_labels == 0)]
+    v_label1 = val[np.where(v_labels == 1)]
+    v_label2 = val[np.where(v_labels == 2)]
+
+    plt.figure(1)
+    plt.scatter(t_label0[:, 0], t_label0[:, 1], c='b', label='COVID')
+    plt.scatter(t_label1[:, 0], t_label1[:, 1], c='r', label='MERS')
+    plt.scatter(t_label2[:, 0], t_label2[:, 1], c='g', label='SARS')
+    plt.title('K-Means Cluster Map of Training Set')
+    plt.legend(loc='upper right')
+
+    plt.figure(2)
+    plt.scatter(v_label0[:, 0], v_label0[:, 1], c='b', label='COVID')
+    plt.scatter(v_label1[:, 0], v_label1[:, 1], c='r', label='MERS')
+    plt.scatter(v_label2[:, 0], v_label2[:, 1], c='g', label='SARS')
+    plt.title('K-Means Cluster Map of Validation Set')
+    plt.legend(loc='upper right')
+
+def create_model(xdim, ydim, zdim): # base convolutional autoencoder
+    x = Input(shape=(xdim, ydim, zdim))
+    e_conv1 = Conv2D(64, (3, 3), activation='relu', padding='same')(x)
+    pool1 = MaxPool2D((2, 2), padding='same')(e_conv1)
+    batchnorm_1 = BatchNormalization()(pool1)
+
+    e_conv2 = Conv2D(32, (3, 3), activation='relu', padding='same')(batchnorm_1)
+    pool2 = MaxPool2D((2, 2), padding='same')(e_conv2)
+    batchnorm_2 = BatchNormalization()(pool2)
+
+    e_conv3 = Conv2D(16, (3, 3), activation='relu', padding='same')(batchnorm_2)
+    h = MaxPool2D((2, 2), padding='same')(e_conv3)
+
+    # Decoder - reconstructs the input from a latent representation
+    d_conv1 = Conv2D(64, (3, 3), activation='relu', padding='same')(h)
+    up1 = UpSampling2D((2, 2))(d_conv1)
+
+    d_conv2 = Conv2D(32, (3, 3), activation='relu', padding='same')(up1)
+    up2 = UpSampling2D((2, 2))(d_conv2)
+
+    d_conv3 = Conv2D(16, (3, 3), activation='relu')(up2)
+    up3 = UpSampling2D((2, 2))(d_conv3)
+
+    r = Conv2D(3, (3, 3), activation='sigmoid', padding='same')(up3)
+
+    model = Model(x, r)
+    model.compile(optimizer=Adam(learning_rate=0.0005), loss='mse')
+    return model
+
 if __name__ == '__main__':
     print(str(time.ctime()) + ": Initializing...")
     trainset, valset, traintxt, valtxt = dataLoading()
     print(str(time.ctime()) + ": Successfully loaded all data sets!")
 
-    # print(str(time.ctime()) + ": Plotting contact maps...")
-    # rawDataPlotting(trainset, valset)
-    # print(str(time.ctime()) + ": Finished Plotting!")
-    # plt.show() # plotting each sample data to see contact maps
+    print(str(time.ctime()) + ": Plotting contact maps...")
+    rawDataPlotting(trainset, valset)
+    print(str(time.ctime()) + ": Finished Plotting!")
+    plt.show() # plotting each sample data to see contact maps
 
     print(str(time.ctime()) + ": Implementing PCA Clustering...")
     reduced_train_2D, reduced_val_2D = pca(trainset, valset, 2)
     reduced_train_3D, reduced_val_3D = pca(trainset, valset, 3)
     print(str(time.ctime()) + ": Finished PCA Clustering!")
 
-    # TODO: Fix cluster colour coding, if there is a problem
     print(str(time.ctime()) + ": Plotting PCA...")
     plotPCA_2D(reduced_train_2D, reduced_val_2D, traintxt, valtxt)
     plotPCA_3D(reduced_train_3D, reduced_val_3D, traintxt, valtxt)
     print(str(time.ctime()) + ": Finished PCA Plotting!")
     plt.show() # after PCA clustering plot the first n PCs to see clusters
 
+    print(str(time.ctime()) + ": Implementing K-Means Clustering...")
+    l_t, l_v = kmeans(reduced_val_2D, reduced_val_2D)
+    print(str(time.ctime()) + ": Finished K-Means Clustering!")
+
+    print(str(time.ctime()) + ": Plotting K-Means...")
+    plotKMeans_2D(reduced_train_2D, reduced_val_2D, l_t, l_v)
+    print(str(time.ctime()) + ": Finished K-Means Plotting!")
+    plt.show()
+
     # TODO: Fix problem with fit method
     # print(str(time.ctime()) + ": Implementing Machine Learning...")
     # epochs = 20
     # batch_size = 128
-    # model = Sequential()
-    # model.add(Dense(64, activation='relu', input_shape=(reduced_train_2D.shape[1],)))
-    # model.add(Dense(64, activation='relu'))
-    # model.add(Dense(32, activation='relu'))
-    # model.add(Dense(16, activation='relu'))
+    # autoencoder = create_model(trainset.shape[0], trainset.shape[1], trainset.shape[2])
+    # trainset = np.expand_dims(trainset, axis=0)
+    # history = autoencoder.fit(trainset, batch_size=batch_size, epochs=epochs)
     #
-    # model.compile(loss='mse', optimizer=Adam(learning_rate=0.0005), metrics=['accuracy'])
-    # history = model.fit(reduced_train_2D, batch_size=batch_size, epochs=epochs, validation_data=reduced_val_2D)
+    # result = autoencoder.predict(valset)
+    # autoencoder.evaluate(trainset, result)
+    #
     # print(str(time.ctime()) + ": Finished Machine Learning!")
