@@ -9,7 +9,7 @@ import h5py
 import numpy as np
 from matplotlib import pyplot as plt
 import time
-from sklearn.preprocessing import normalize
+from sklearn.preprocessing import normalize, StandardScaler
 from sklearn.decomposition import PCA
 from mpl_toolkits import mplot3d
 from tensorflow.keras.layers import Dense
@@ -49,12 +49,13 @@ def pca(train, val, numComponents):
     val_pca = np.resize(val, (val.shape[0], int((val.shape[1] * val.shape[2]) / 2)))  # 152052 x 288
 
     pca_train = PCA(n_components=numComponents)  # define number of principle components needed
-    normalized_train_pca = normalize(train_pca, axis=1, norm='l1') # normalize
+    sc = StandardScaler()
+    normalized_train_pca = sc.fit_transform(train_pca)  # normalize
     normalized_train_pca = pca_train.fit_transform(normalized_train_pca)
     # print(pca_train.explained_variance_ratio_)  # find how much of variance is explained by each component
 
     pca_val = PCA(n_components=numComponents)
-    normalized_val_pca = normalize(val_pca, axis=1, norm='l1') # normalize
+    normalized_val_pca = sc.fit_transform(val_pca)  # normalize
     normalized_val_pca = pca_val.fit_transform(normalized_val_pca)
     # print(pca_val.explained_variance_ratio_)  # find how much of variance is explained by each component
 
@@ -180,38 +181,40 @@ def plotPCA_3D(reduced_t, reduced_v, txt_t, txt_v):
     ax2.set_xlabel('Principal Component 1')
     ax2.set_ylabel('Principal Component 2')
     ax2.set_zlabel('Principal Component 3')
-    plt.title('Scatter plot showing PCA clustering for training dataset')
+    plt.title('Scatter plot showing PCA clustering for validation dataset')
 
 if __name__ == '__main__':
     print(str(time.ctime()) + ": Initializing...")
     trainset, valset, traintxt, valtxt = dataLoading()
     print(str(time.ctime()) + ": Successfully loaded all data sets!")
 
-    print(str(time.ctime()) + ": Plotting contact maps...")
-    rawDataPlotting(trainset, valset)
-    print(str(time.ctime()) + ": Finished Plotting!")
-    plt.show() # plotting each sample data to see contact maps
+    # print(str(time.ctime()) + ": Plotting contact maps...")
+    # rawDataPlotting(trainset, valset)
+    # print(str(time.ctime()) + ": Finished Plotting!")
+    # plt.show() # plotting each sample data to see contact maps
 
     print(str(time.ctime()) + ": Implementing PCA Clustering...")
     reduced_train_2D, reduced_val_2D = pca(trainset, valset, 2)
     reduced_train_3D, reduced_val_3D = pca(trainset, valset, 3)
     print(str(time.ctime()) + ": Finished PCA Clustering!")
 
+    # TODO: Fix cluster colour coding, if there is a problem
     print(str(time.ctime()) + ": Plotting PCA...")
     plotPCA_2D(reduced_train_2D, reduced_val_2D, traintxt, valtxt)
     plotPCA_3D(reduced_train_3D, reduced_val_3D, traintxt, valtxt)
     print(str(time.ctime()) + ": Finished PCA Plotting!")
     plt.show() # after PCA clustering plot the first n PCs to see clusters
 
-    print(str(time.ctime()) + ": Implementing Machine Learning...")
-    epochs = 20
-    batch_size = 128
-    model = Sequential()
-    model.add(Dense(64, activation='relu', input_shape=(reduced_train_2D.shape[1],)))
-    model.add(Dense(64, activation='relu'))
-    model.add(Dense(32, activation='relu'))
-    model.add(Dense(16, activation='relu'))
-
-    model.compile(loss='mse', optimizer=Adam(learning_rate=0.0005), metrics=['accuracy'])
-    history = model.fit(reduced_train_2D, batch_size=batch_size, epochs=epochs, validation_data=reduced_val_2D)
-    print(str(time.ctime()) + ": Finished Machine Learning!")
+    # TODO: Fix problem with fit method
+    # print(str(time.ctime()) + ": Implementing Machine Learning...")
+    # epochs = 20
+    # batch_size = 128
+    # model = Sequential()
+    # model.add(Dense(64, activation='relu', input_shape=(reduced_train_2D.shape[1],)))
+    # model.add(Dense(64, activation='relu'))
+    # model.add(Dense(32, activation='relu'))
+    # model.add(Dense(16, activation='relu'))
+    #
+    # model.compile(loss='mse', optimizer=Adam(learning_rate=0.0005), metrics=['accuracy'])
+    # history = model.fit(reduced_train_2D, batch_size=batch_size, epochs=epochs, validation_data=reduced_val_2D)
+    # print(str(time.ctime()) + ": Finished Machine Learning!")
