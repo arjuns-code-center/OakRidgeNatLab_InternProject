@@ -1,0 +1,26 @@
+#!/bin/bash
+# Begin LSF directives
+#BSUB -P gen150
+#BSUB -J cvae
+#BSUB -o tst.o%J
+#BSUB -W 0:30
+#BSUB -nnodes 1
+# End LSF directives and begin shell commands
+
+source env-summit.sh
+NODES=$(cat ${LSB_DJOB_HOSTFILE} | sort | uniq | grep -v login | grep -v batch | wc -l)
+
+epochs=10
+batch=16
+dims=7
+
+# training
+jsrun -n${NODES} -a 6 -g 6 -c42 -r1  python train_cvae.py \
+                                            -d $dims \
+                                            --train_file sars-mers-cov2_train.h5 \
+                                            --val_file sars-mers-cov2_val.h5 \
+                                            -batch_size $batch  \
+                                            -epochs $epochs
+#inference
+jsrun -n 1 -a 1 -c 42 -g 1 -r1 python cvae/inference.py -d $dims -i sars-mers-cov2_val.h5 -w cvae_weight-${epochs}.h5  -o sars-mers-cov2 
+
