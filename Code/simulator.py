@@ -4,7 +4,7 @@
 # Date Started: 6/7/2021
 # Date TBC: 8/13/2021
 # All datasets provided by Dr. Yin
-
+##
 import h5py
 import numpy as np
 from matplotlib import pyplot as plt
@@ -17,6 +17,7 @@ from mpl_toolkits import mplot3d
 from tensorflow.keras.layers import Conv2D, MaxPool2D, UpSampling2D
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras import Input, Model
+##
 
 def dataLoading():
     sarsmerscov_train = h5py.File('D:\\ORNL_Code_Data\\sars-mers-cov2_train.h5', 'r')
@@ -24,8 +25,8 @@ def dataLoading():
     label_training = list(open('D:\\ORNL_Coding\\Data Files\\label_train.txt', 'r'))
     label_validation = list(open('D:\\ORNL_Coding\\Data Files\\label_val.txt', 'r')) # open all files
 
-    dset_train = np.array(sarsmerscov_train['contact_maps'][:, :, :, 0]).astype(float) # 616207 x 24 x 24
-    dset_val = np.array(sarsmerscov_val['contact_maps'][:, :, :, 0]).astype(float) # 152052 x 24 x 24
+    dset_train = np.array(sarsmerscov_train['contact_maps']).astype(float) # 616207 x 24 x 24 x 1
+    dset_val = np.array(sarsmerscov_val['contact_maps']).astype(float) # 152052 x 24 x 24 x 1
 
     return dset_train, dset_val, label_training, label_validation
 
@@ -231,54 +232,62 @@ def create_model(xdim, ydim, zdim): # base convolutional autoencoder
     d_conv2 = Conv2D(64, (3, 3), activation='relu', padding='same')(up1)  # 12 x 12 x 64
     up2 = UpSampling2D((2, 2))(d_conv2)  # 24 x 24 x 64
 
-    r = Conv2D(1, (1, 1), activation='sigmoid')(up2)  # 22 x 22 x 1
+    r = Conv2D(1, (1, 1), activation='sigmoid')(up2)  # 24 x 24 x 1
 
     model = Model(x, r)
     model.compile(optimizer=Adam(learning_rate=0.0005), loss='mse')
     return model
 
-if __name__ == '__main__':
-    print(str(time.ctime()) + ": Initializing...")
-    trainset, valset, traintxt, valtxt = dataLoading()
-    print(str(time.ctime()) + ": Successfully loaded all data sets!")
+##
+print(str(time.ctime()) + ": Initializing...")
+trainset, valset, traintxt, valtxt = dataLoading()
+print(trainset.shape)
+print(valset.shape)
+print(str(time.ctime()) + ": Successfully loaded all data sets!")
 
-    print(str(time.ctime()) + ": Plotting contact maps...")
-    rawDataPlotting(trainset, valset)
-    print(str(time.ctime()) + ": Finished Plotting!")
-    plt.show() # plotting each sample data to see contact maps
+##
+print(str(time.ctime()) + ": Plotting contact maps...")
+rawDataPlotting(trainset[:, :, :, 0], valset[:, :, :, 0])
+print(str(time.ctime()) + ": Finished Plotting!")
+plt.show() # plotting each sample data to see contact maps
 
-    print(str(time.ctime()) + ": Implementing PCA Clustering...")
-    reduced_train_2D, reduced_val_2D = pca(trainset, valset, 2)
-    reduced_train_3D, reduced_val_3D = pca(trainset, valset, 3)
-    print(str(time.ctime()) + ": Finished PCA Clustering!")
+##
+print(str(time.ctime()) + ": Implementing PCA Clustering...")
+reduced_train_2D, reduced_val_2D = pca(trainset[:, :, :, 0], valset[:, :, :, 0], 2)
+reduced_train_3D, reduced_val_3D = pca(trainset[:, :, :, 0], valset[:, :, :, 0], 3)
+print(str(time.ctime()) + ": Finished PCA Clustering!")
 
-    print(str(time.ctime()) + ": Plotting PCA...")
-    plotPCA_2D(reduced_train_2D, reduced_val_2D, traintxt, valtxt)
-    plotPCA_3D(reduced_train_3D, reduced_val_3D, traintxt, valtxt)
-    print(str(time.ctime()) + ": Finished PCA Plotting!")
-    plt.show() # after PCA clustering plot the first n PCs to see clusters
+##
+print(str(time.ctime()) + ": Plotting PCA...")
+plotPCA_2D(reduced_train_2D, reduced_val_2D, traintxt, valtxt)
+plotPCA_3D(reduced_train_3D, reduced_val_3D, traintxt, valtxt)
+print(str(time.ctime()) + ": Finished PCA Plotting!")
+plt.show() # after PCA clustering plot the first n PCs to see clusters
 
-    print(str(time.ctime()) + ": Implementing K-Means Clustering...")
-    l_t, l_v = kmeans(reduced_val_2D, reduced_val_2D)
-    print(str(time.ctime()) + ": Finished K-Means Clustering!")
+##
+print(str(time.ctime()) + ": Implementing K-Means Clustering...")
+l_t, l_v = kmeans(reduced_val_2D, reduced_val_2D)
+print(str(time.ctime()) + ": Finished K-Means Clustering!")
 
-    print(str(time.ctime()) + ": Plotting K-Means...")
-    plotKMeans_2D(reduced_train_2D, reduced_val_2D, l_t, l_v)
-    print(str(time.ctime()) + ": Finished K-Means Plotting!")
-    plt.show()
+##
+print(str(time.ctime()) + ": Plotting K-Means...")
+plotKMeans_2D(reduced_train_2D, reduced_val_2D, l_t, l_v)
+print(str(time.ctime()) + ": Finished K-Means Plotting!")
+plt.show()
 
-    print(str(time.ctime()) + ": Implementing Machine Learning...")
-    epochs = 20
-    batch_size = 64
+##
+print(str(time.ctime()) + ": Implementing Machine Learning...")
+epochs = 20
+batch_size = 128
 
-    X_train, X_valid, y_train, y_valid = train_test_split(trainset, trainset, test_size=0.2, random_state=13)
+X_train, X_valid, y_train, y_valid = train_test_split(trainset, trainset, test_size=0.2, random_state=13)
 
-    autoencoder = create_model(24, 24, 1)
-    # print(autoencoder.summary())
-    history = autoencoder.fit(X_train, y_train, batch_size=batch_size, epochs=epochs)
+autoencoder = create_model(24, 24, 1)
+# print(autoencoder.summary())
+history = autoencoder.fit(X_train, y_train, batch_size=batch_size, epochs=epochs)
 
-    result = autoencoder.predict(valset)
-    loss_val = autoencoder.evaluate(result, valset)
-    print("Loss: " + str(loss_val))
+result = autoencoder.predict(valset)
+loss_val = autoencoder.evaluate(result, valset)
+print("Loss: " + str(loss_val))
 
-    print(str(time.ctime()) + ": Finished Machine Learning!")
+print(str(time.ctime()) + ": Finished Machine Learning!")
