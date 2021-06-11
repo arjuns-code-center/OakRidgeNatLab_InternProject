@@ -12,6 +12,7 @@ import time
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
+from sklearn.model_selection import train_test_split
 from mpl_toolkits import mplot3d
 from tensorflow.keras.layers import Conv2D, MaxPool2D, BatchNormalization, UpSampling2D
 from tensorflow.keras.optimizers import Adam
@@ -214,29 +215,23 @@ def plotKMeans_2D(train, val, t_labels, v_labels):
     plt.legend(loc='upper right')
 
 def create_model(xdim, ydim, zdim): # base convolutional autoencoder
-    x = Input(shape=(xdim, ydim, zdim))
-    e_conv1 = Conv2D(64, (3, 3), activation='relu', padding='same')(x)
-    pool1 = MaxPool2D((2, 2), padding='same')(e_conv1)
-    batchnorm_1 = BatchNormalization()(pool1)
+    x = Input(shape=(xdim, ydim, zdim))  # 24 x 24 x 1
+    e_conv1 = Conv2D(32, (3, 3), activation='relu', padding='same')(x)  # 24 x 24 x 32
+    pool1 = MaxPool2D((2, 2), padding='same')(e_conv1)  # 12 x 12 x 32
 
-    e_conv2 = Conv2D(32, (3, 3), activation='relu', padding='same')(batchnorm_1)
-    pool2 = MaxPool2D((2, 2), padding='same')(e_conv2)
-    batchnorm_2 = BatchNormalization()(pool2)
+    e_conv2 = Conv2D(64, (3, 3), activation='relu', padding='same')(pool1)  # 12 x 12 x 64
+    pool2 = MaxPool2D((2, 2), padding='same')(e_conv2)  # 6 x 6 x 64
 
-    e_conv3 = Conv2D(16, (3, 3), activation='relu', padding='same')(batchnorm_2)
-    h = MaxPool2D((2, 2), padding='same')(e_conv3)
+    e_conv3 = Conv2D(128, (3, 3), activation='relu', padding='same')(pool2)  # 6 x 6 x 128
 
     # Decoder - reconstructs the input from a latent representation
-    d_conv1 = Conv2D(64, (3, 3), activation='relu', padding='same')(h)
-    up1 = UpSampling2D((2, 2))(d_conv1)
+    d_conv1 = Conv2D(128, (3, 3), activation='relu', padding='same')(e_conv3)  # 6 x 6 x 128
+    up1 = UpSampling2D((2, 2))(d_conv1)  # 12 x 12 x 128
 
-    d_conv2 = Conv2D(32, (3, 3), activation='relu', padding='same')(up1)
-    up2 = UpSampling2D((2, 2))(d_conv2)
+    d_conv2 = Conv2D(64, (3, 3), activation='relu', padding='same')(up1)  # 12 x 12 x 64
+    up2 = UpSampling2D((2, 2))(d_conv2)  # 24 x 24 x 64
 
-    d_conv3 = Conv2D(16, (3, 3), activation='relu')(up2)
-    up3 = UpSampling2D((2, 2))(d_conv3)
-
-    r = Conv2D(3, (3, 3), activation='sigmoid', padding='same')(up3)
+    r = Conv2D(1, (1, 1), activation='sigmoid')(up2)  # 22 x 22 x 1
 
     model = Model(x, r)
     model.compile(optimizer=Adam(learning_rate=0.0005), loss='mse')
@@ -272,15 +267,18 @@ if __name__ == '__main__':
     print(str(time.ctime()) + ": Finished K-Means Plotting!")
     plt.show()
 
-    # TODO: Fix problem with fit method
-    # print(str(time.ctime()) + ": Implementing Machine Learning...")
-    # epochs = 20
-    # batch_size = 128
-    # autoencoder = create_model(trainset.shape[0], trainset.shape[1], trainset.shape[2])
-    # trainset = np.expand_dims(trainset, axis=0)
-    # history = autoencoder.fit(trainset, batch_size=batch_size, epochs=epochs)
-    #
-    # result = autoencoder.predict(valset)
-    # autoencoder.evaluate(trainset, result)
-    #
-    # print(str(time.ctime()) + ": Finished Machine Learning!")
+    print(str(time.ctime()) + ": Implementing Machine Learning...")
+    epochs = 20
+    batch_size = 64
+
+    X_train, X_valid, y_train, y_valid = train_test_split(trainset, trainset, test_size=0.2, random_state=13)
+
+    autoencoder = create_model(24, 24, 1)
+    # print(autoencoder.summary())
+    history = autoencoder.fit(X_train, y_train, batch_size=batch_size, epochs=epochs)
+
+    result = autoencoder.predict(valset)
+    loss_val = autoencoder.evaluate(result, valset)
+    print("Loss: " + str(loss_val))
+
+    print(str(time.ctime()) + ": Finished Machine Learning!")
