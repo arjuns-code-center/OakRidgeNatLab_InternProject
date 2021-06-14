@@ -15,7 +15,7 @@ from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
 from sklearn.model_selection import train_test_split
 from mpl_toolkits import mplot3d
-from tensorflow.keras.layers import Conv2D, MaxPool2D, UpSampling2D, BatchNormalization, Dense
+from tensorflow.keras.layers import Conv2D, MaxPool2D, BatchNormalization, Flatten, Dense
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras import Input, Model
