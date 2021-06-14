@@ -15,7 +15,8 @@ from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
 from sklearn.model_selection import train_test_split
 from mpl_toolkits import mplot3d
-from tensorflow.keras.layers import Conv2D, MaxPool2D, UpSampling2D
+from tensorflow.keras.layers import Conv2D, MaxPool2D, UpSampling2D, BatchNormalization, Dense
+from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras import Input, Model
 
@@ -156,39 +157,77 @@ plt.title('K-Means Cluster Map of Validation Set')
 plt.legend(loc='upper right')
 
 ##
-print(str(time.ctime()) + ": Creating convolutional autoencoder...")
+print(str(time.ctime()) + ": Implementing ML Classification...")
+
+train_Y_onehot = to_categorical(label_training) # model and ML for classification
+test_Y_onehot = to_categorical(label_validation)
+
+##
+train_X, valid_X, train_label, valid_label = train_test_split(trainset, train_Y_onehot, test_size=0.2, random_state=13)
+# train_X = 492965 x 24 x 24 x 1
+# valid_X = 123242 x 24 x 24 x 1
+# train_label = 492965 x 3
+# valid_label = 123242 x 3
+
+##
+print(str(time.ctime()) + ": Creating Classification Model...")
+
 x = Input(shape=(24, 24, 1))  # 24 x 24 x 1
 e_conv1 = Conv2D(32, (3, 3), activation='relu', padding='same')(x)  # 24 x 24 x 32
 pool1 = MaxPool2D((2, 2), padding='same')(e_conv1)  # 12 x 12 x 32
+b_norm1 = BatchNormalization()(pool1)
 
-e_conv2 = Conv2D(64, (3, 3), activation='relu', padding='same')(pool1)  # 12 x 12 x 64
+e_conv2 = Conv2D(64, (3, 3), activation='relu', padding='same')(b_norm1)  # 12 x 12 x 64
 pool2 = MaxPool2D((2, 2), padding='same')(e_conv2)  # 6 x 6 x 64
+b_norm2 = BatchNormalization()(pool2)
 
-e_conv3 = Conv2D(128, (3, 3), activation='relu', padding='same')(pool2)  # 6 x 6 x 128
+e_conv3 = Conv2D(128, (3, 3), activation='relu', padding='same')(b_norm2)  # 6 x 6 x 128
 
-# Decoder - reconstructs the input from a latent representation
-d_conv1 = Conv2D(128, (3, 3), activation='relu', padding='same')(e_conv3)  # 6 x 6 x 128
-up1 = UpSampling2D((2, 2))(d_conv1)  # 12 x 12 x 128
+f1 = Flatten()(e_conv3) # add a fully connected layer after just the encoding
+dense_1 = Dense(128, activation='relu')(f1)
+r = Dense(3, activation='softmax')(dense_1)
 
-d_conv2 = Conv2D(64, (3, 3), activation='relu', padding='same')(up1)  # 12 x 12 x 64
-up2 = UpSampling2D((2, 2))(d_conv2)  # 24 x 24 x 64
+classification_model = Model(x, r) # compile full model
+classification_model.compile(loss='mse', optimizer=Adam(learning_rate=0.0005), metrics=['accuracy'])
 
-r = Conv2D(1, (1, 1), activation='sigmoid')(up2)  # 24 x 24 x 1
-
-model = Model(x, r)
-model.compile(optimizer=Adam(learning_rate=0.0005), loss='mse')
-print(str(time.ctime()) + ": Successfully created convolutional autoencoder")
+print(str(time.ctime()) + ": Successfully created Classification Model")
 
 ##
-print(str(time.ctime()) + ": Implementing Machine Learning...")
-epochs = 20
+print(str(time.ctime()) + ": Training Classification Model...")
+
+epochs = 10
 batch_size = 128
+classify_labels = classification_model.fit(train_X, train_label, batch_size=batch_size, epochs=epochs, validation_data=(valid_X, valid_label))
 
-X_train, X_valid, y_train, y_valid = train_test_split(trainset, trainset, test_size=0.2, random_state=13)
-# print(model.summary())
-history = model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs)
+print(str(time.ctime()) + ": Finished training!")
 
-result = model.predict(valset)
-loss_val = model.evaluate(result, valset)
-print("Loss: " + str(loss_val))
-print(str(time.ctime()) + ": Finished Machine Learning!")
+##
+print(str(time.ctime()) + ": Evaluating Classification Model...")
+
+test_eval = classification_model.evaluate(valset, test_Y_onehot)
+print('Loss: ' + str(test_eval[0]))
+print('Accuracy: ' + str(test_eval[1]))
+
+print(str(time.ctime()) + ": Finished evaluation!")
+
+##
+print(str(time.ctime()) + ": Predicting with Classification Model...")
+
+predicted = classification_model.predict(valset)
+predicted = np.argmax(np.round(predicted), axis=1)
+
+print(str(time.ctime()) + ": Finished predictions!")
+
+##
+correct = np.where(predicted == label_validation)[0]
+incorrect = np.where(predicted != label_validation)[0]
+print("Number of Correct Classifications: " + str(len(correct)))
+print("Number of Incorrect Classifications: " + str(len(incorrect)))
+
+##
+plt.figure(7)
+for i in range(15):
+    plt.subplot(3,5,i+1)
+    plt.imshow(valset[correct[i], :, :])
+    plt.title("Predicted {}, Class {}".format(predicted[correct[i]], int(label_validation[correct[i]])))
+    plt.show()
