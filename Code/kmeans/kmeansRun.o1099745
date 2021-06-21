@@ -1,0 +1,26 @@
+Warning: OMP_NUM_THREADS=16 is greater than available PU's
+2021-06-21 14:38:15.264775: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.10.2
+Matplotlib created a temporary config/cache directory at /tmp/matplotlib-gei9scp4 because the default path (/ccs/home/arjun2612/.config/matplotlib) is not a writable directory; it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+Mon Jun 21 14:38:24 2021: Initializing...
+Mon Jun 21 14:38:26 2021: Successfully loaded all data sets!
+Mon Jun 21 14:38:26 2021: Implementing PCA Clustering...
+Mon Jun 21 14:38:29 2021: Finished PCA Clustering!
+Mon Jun 21 14:38:29 2021: Implementing KMeans Clustering...
+Accuracy: 66.12666666666667
+Mon Jun 21 14:38:37 2021: Finished KMeans Clustering!
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@batch5>
+Subject: Job 1099745: <KMeans> in cluster <summit> Done
+
+Job <KMeans> was submitted from host <login5> by user <arjun2612> in cluster <summit> at Mon Jun 21 14:35:20 2021
+Job was executed on host(s) <1*batch5>, in queue <batch>, as user <arjun2612> in cluster <summit> at Mon Jun 21 14:37:53 2021
+                            <42*c32n03>
+</ccs/home/arjun2612> was used as the home directory.
+</gpfs/alpine/scratch/arjun2612/gen150/ORNL_Coding/Code/kmeans> was used as the working directory.
+Started at Mon Jun 21 14:37:53 2021
+Terminated at Mon Jun 21 14:38:40 2021
+Results reported at Mon Jun 21 14:38:40 2021
+
+The output (if any) is above this job summary.
+
