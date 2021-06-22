@@ -2,15 +2,18 @@ import h5py
 import numpy as np
 import time
 from sklearn.utils import shuffle
-from tensorflow.keras.utils import to_categorical
 from sklearn.preprocessing import normalize
-from sklearn.decomposition import PCA
+from cuml.decomposition import PCA
+# from cuml.dask.decomposition import PCA
 import matplotlib
 import matplotlib.cm as cmx
+from matplotlib import pyplot as plt
+import tensorflow as tf
+from tensorflow.keras.utils import to_categorical
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.callbacks import EarlyStopping
-from matplotlib import pyplot as plt
+import horovod.keras as hvd
 
 print(str(time.ctime()) + ": Initializing...")
 sarsmerscov_train = h5py.File('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/cvae/sars-mers-cov2_train.h5', 'r')
@@ -48,6 +51,13 @@ lv_onehot = to_categorical(label_validation)
 
 cvae_embeddings = np.squeeze(cvae_embeddings)[0:val_size]
 
+hvd.init()
+gpus = tf.config.experimental.list_physical_devices('GPU')
+for gpu in gpus:
+    tf.config.experimental.set_memory_growth(gpu, True)
+if gpus:
+    tf.config.experimental.set_visible_devices(gpus[hvd.local_rank()])
+
 lt = None
 lv = None
 sarsmerscov_train = None
@@ -83,12 +93,20 @@ pcamodel.add(Dense(64, activation='relu'))
 pcamodel.add(Dense(64, activation='relu'))
 pcamodel.add(Dense(32, activation='relu'))
 pcamodel.add(Dense(3, activation='softmax'))
-pcamodel.compile(loss='categorical_crossentropy', optimizer='Adam', metrics=['categorical_accuracy'])
+
+opt = tf.keras.optimizers.Adam(0.001 * hvd.size()) # adjust learning rate based on # GPUs
+opt = hvd.DistributedOptimizer(opt) # add distributed optimizer
+pcamodel.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['categorical_accuracy'])
         
 batch_size = 64
 epochs = 20
-early_stop = EarlyStopping(monitor='val_categorical_accuracy', patience=5, restore_best_weights=True)
-history = pcamodel.fit(reduced_train, lt_onehot, batch_size=batch_size, epochs=epochs, validation_data=(reduced_val, lv_onehot), callbacks=[early_stop])
+# early_stop = EarlyStopping(monitor='val_categorical_accuracy', patience=5, restore_best_weights=True)
+callbacks = [hvd.callbacks.BroadcastGlobalVariablesCallback(0)]
+
+if hvd.rank() == 0:
+    callbacks.append(tf.keras.callbacks.ModelCheckpoint('./checkpoint-{epoch}.h5'))
+
+history = pcamodel.fit(reduced_train, lt_onehot, batch_size=batch_size, epochs=epochs, validation_data=(reduced_val, lv_onehot), callbacks=callbacks)
         
 print(str(time.ctime()) + ": Finished PCA ML")
 print(str(time.ctime()) + ": Predicting with PCA Model...")

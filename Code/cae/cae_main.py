@@ -3,15 +3,18 @@ import numpy as np
 import time
 from sklearn.utils import shuffle
 from sklearn.preprocessing import normalize
-from sklearn.decomposition import PCA
+from sklearn.model_selection import train_test_split
+from cuml.decomposition import PCA
+# from cuml.dask.decomposition import PCA
+import tensorflow as tf
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras import Input, Model
 from tensorflow.keras.layers import Conv2D, MaxPool2D, BatchNormalization, UpSampling2D, Flatten, Dense
-from sklearn.model_selection import train_test_split
 import matplotlib
 import matplotlib.cm as cmx
 from matplotlib import pyplot as plt
+import horovod.keras as hvd
 
 print(str(time.ctime()) + ": Initializing...")
 sarsmerscov_train = h5py.File('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/cvae/sars-mers-cov2_train.h5', 'r')
@@ -48,6 +51,13 @@ lt_onehot = to_categorical(label_training) # make one hot vectors
 lv_onehot = to_categorical(label_validation)
 
 cvae_embeddings = np.squeeze(cvae_embeddings)[0:val_size]
+
+hvd.init()
+gpus = tf.config.experimental.list_physical_devices('GPU')
+for gpu in gpus:
+    tf.config.experimental.set_memory_growth(gpu, True)
+if gpus:
+    tf.config.experimental.set_visible_devices(gpus[hvd.local_rank()])
 
 lt = None
 lv = None
@@ -122,7 +132,9 @@ f1 = Flatten()(b_norm11) # add a fully connected layer after just the autoencode
 r = Dense(3, activation='softmax')(f1) # 3 x 1
 
 classification_model = Model(x, r) # compile full model
-classification_model.compile(loss='categorical_crossentropy', optimizer='Adam', metrics=['categorical_accuracy'])
+opt = tf.keras.optimizers.Adam(0.001 * hvd.size())
+opt = hvd.DistributedOptimizer(opt)
+classification_model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['categorical_accuracy'])
 
 print(str(time.ctime()) + ": Successfully created Classification Model")
         
@@ -136,8 +148,13 @@ print(str(time.ctime()) + ": Training Classification Model...")
 
 epochs = 20
 batch_size = 64
-early_stop = EarlyStopping(monitor='val_categorical_accuracy', patience=5, restore_best_weights=True)
-classify_labels = classification_model.fit(train_X, train_label, batch_size=batch_size, epochs=epochs, callbacks=[early_stop], validation_data=(valid_X, valid_label))
+# early_stop = EarlyStopping(monitor='val_categorical_accuracy', patience=5, restore_best_weights=True)
+callbacks = [hvd.callbacks.BroadcastGlobalVariablesCallback(0)]
+
+if hvd.rank() == 0:
+    callbacks.append(tf.keras.callbacks.ModelCheckpoint('./checkpoint-{epoch}.h5'))
+
+classify_labels = classification_model.fit(train_X, train_label, batch_size=batch_size, epochs=epochs, callbacks=callbacks, validation_data=(valid_X, valid_label))
 
 print(str(time.ctime()) + ": Finished training!")
 

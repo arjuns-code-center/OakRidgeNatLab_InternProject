@@ -3,9 +3,11 @@ import numpy as np
 import time
 from sklearn.utils import shuffle
 from sklearn.preprocessing import normalize
-from sklearn.decomposition import PCA
+from cuml.decomposition import PCA
+# from cuml.dask.decomposition import PCA
+from cuml.cluster import KMeans
+# from cuml.dask.cluster import KMeans
 from tensorflow.keras.utils import to_categorical
-from sklearn.cluster import KMeans
 import matplotlib
 import matplotlib.cm as cmx
 from matplotlib import pyplot as plt
