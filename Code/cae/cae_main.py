@@ -4,16 +4,12 @@ import time
 from sklearn.utils import shuffle
 from sklearn.preprocessing import normalize
 from sklearn.model_selection import train_test_split
-from cuml.decomposition import PCA
-# from cuml.dask.decomposition import PCA
+from sklearn.decomposition import PCA
 import tensorflow as tf
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras import Input, Model
 from tensorflow.keras.layers import Conv2D, MaxPool2D, BatchNormalization, UpSampling2D, Flatten, Dense
-import matplotlib
-import matplotlib.cm as cmx
-from matplotlib import pyplot as plt
 import horovod.keras as hvd
 
 print(str(time.ctime()) + ": Initializing...")
@@ -21,8 +17,6 @@ sarsmerscov_train = h5py.File('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding
 sarsmerscov_val = h5py.File('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/cvae/sars-mers-cov2_val.h5', 'r')
 lt = list(open('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/label_train.txt', 'r'))
 lv = list(open('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/label_val.txt', 'r')) # open all files
-cvae_embeddings = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/cvae/sars-mers-cov2-embeddings.npy', 'r')
-cvae_samples = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/cvae/sars-mers-cov2-samples.npz', 'r')
         
 label_training = np.array([])
 label_validation = np.array([])
@@ -50,15 +44,6 @@ val_3D = np.tril(valset[:, :, :, 0])
 lt_onehot = to_categorical(label_training) # make one hot vectors
 lv_onehot = to_categorical(label_validation)
 
-cvae_embeddings = np.squeeze(cvae_embeddings)[0:val_size]
-
-hvd.init()
-gpus = tf.config.experimental.list_physical_devices('GPU')
-for gpu in gpus:
-    tf.config.experimental.set_memory_growth(gpu, True)
-if gpus:
-    tf.config.experimental.set_visible_devices(gpus[hvd.local_rank()])
-
 lt = None
 lv = None
 sarsmerscov_train = None
@@ -72,10 +57,6 @@ val_pca = np.reshape(val_3D, (val_3D.shape[0], -1))  # 15000 x 576
 
 normalized_train_pca = normalize(train_pca, axis=1, norm='l1')
 normalized_val_pca = normalize(val_pca, axis=1, norm='l1')
-
-# sc = StandardScaler()
-# normalized_train_pca = sc.fit_transform(tpca)
-# normalized_val_pca = sc.fit_transform(vpca)
 
 pca = PCA(2)  # 2 PCs
 pca.fit(normalized_train_pca)
@@ -132,6 +113,14 @@ f1 = Flatten()(b_norm11) # add a fully connected layer after just the autoencode
 r = Dense(3, activation='softmax')(f1) # 3 x 1
 
 classification_model = Model(x, r) # compile full model
+
+hvd.init()
+gpus = tf.config.experimental.list_physical_devices('GPU')
+for gpu in gpus:
+    tf.config.experimental.set_memory_growth(gpu, True)
+if gpus:
+    tf.config.experimental.set_visible_devices(gpus[hvd.local_rank()], 'GPU')
+
 opt = tf.keras.optimizers.Adam(0.001 * hvd.size())
 opt = hvd.DistributedOptimizer(opt)
 classification_model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['categorical_accuracy'])
@@ -150,9 +139,6 @@ epochs = 20
 batch_size = 64
 # early_stop = EarlyStopping(monitor='val_categorical_accuracy', patience=5, restore_best_weights=True)
 callbacks = [hvd.callbacks.BroadcastGlobalVariablesCallback(0)]
-
-if hvd.rank() == 0:
-    callbacks.append(tf.keras.callbacks.ModelCheckpoint('./checkpoint-{epoch}.h5'))
 
 classify_labels = classification_model.fit(train_X, train_label, batch_size=batch_size, epochs=epochs, callbacks=callbacks, validation_data=(valid_X, valid_label))
 
@@ -178,24 +164,4 @@ incorrect = np.where(predicted != label_validation)[0]
 print("Number of Correct Classifications: " + str(len(correct)))
 print("Number of Incorrect Classifications: " + str(len(incorrect)))
 
-cNorm = matplotlib.colors.Normalize(vmin=min(predicted), vmax=max(predicted))
-scalarMap = cmx.ScalarMappable(norm=cNorm)
-fig = plt.figure(7)
-plt.scatter(reduced_val[:, 0], reduced_val[:, 1], c=scalarMap.to_rgba(predicted))
-scalarMap.set_array(predicted)
-cbar = fig.colorbar(scalarMap)
-cbar.set_ticks([0,1,2])
-cbar.set_ticklabels(["COV2", "MERS", "SARS"])
-plt.title('CAE Cluster Map of Predicted Set')
-fig.savefig('cae_pred.png')
-
-cNorm = matplotlib.colors.Normalize(vmin=min(label_validation), vmax=max(label_validation))
-scalarMap = cmx.ScalarMappable(norm=cNorm)
-fig = plt.figure(8)
-plt.scatter(reduced_val[:, 0], reduced_val[:, 1], c=scalarMap.to_rgba(label_validation))
-scalarMap.set_array(label_validation)
-cbar = fig.colorbar(scalarMap)
-cbar.set_ticks([0,1,2])
-cbar.set_ticklabels(["COV2", "MERS", "SARS"])
-plt.title('CAE Cluster Map of Validation Set')
-fig.savefig('cae_val.png')
+np.savez('plotting.npz', res=predicted, labval=label_validation, redval=reduced_val)
