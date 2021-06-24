@@ -1,0 +1,18 @@
+Warning: OMP_NUM_THREADS=16 is greater than available PU's
+2021-06-24 09:29:02.615545: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.10.2
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@batch1>
+Subject: Job 1108234: <pca> in cluster <summit> Done
+
+Job <pca> was submitted from host <login4> by user <arjun2612> in cluster <summit> at Thu Jun 24 09:28:30 2021
+Job was executed on host(s) <1*batch1>, in queue <batch>, as user <arjun2612> in cluster <summit> at Thu Jun 24 09:28:46 2021
+                            <42*h50n16>
+</ccs/home/arjun2612> was used as the home directory.
+</gpfs/alpine/scratch/arjun2612/gen150/ORNL_Coding/Code/pca> was used as the working directory.
+Started at Thu Jun 24 09:28:46 2021
+Terminated at Thu Jun 24 09:29:09 2021
+Results reported at Thu Jun 24 09:29:09 2021
+
+The output (if any) is above this job summary.
+

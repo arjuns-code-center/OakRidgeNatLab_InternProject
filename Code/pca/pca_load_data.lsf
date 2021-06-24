@@ -2,7 +2,7 @@
 # Begin LSF directives
 #BSUB -P gen150
 #BSUB -J pca
-#BSUB -o pcaRun.o%J
+#BSUB -o pcaLoadData.txt
 #BSUB -W 0:30
 #BSUB -nnodes 1
 # End LSF directives and begin shell commands
@@ -11,4 +11,4 @@
 module load open-ce
 NODES=$(cat ${LSB_DJOB_HOSTFILE} | sort | uniq | grep -v login | grep -v batch | wc -l)
 
-jsrun -n${NODES} -a 1 -g 1 -c42 -r1  python pca_main.py
+jsrun -n${NODES} -a1 -g1 -c42 -r1  python pca_load_data.py
