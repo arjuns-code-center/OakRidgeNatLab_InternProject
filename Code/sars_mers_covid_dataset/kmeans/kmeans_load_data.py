@@ -4,10 +4,10 @@ import time
 from sklearn.utils import shuffle
 
 print(str(time.ctime()) + ": Initializing...")
-sarsmerscov_train = h5py.File('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/cvae/sars-mers-cov2_train.h5', 'r')
-sarsmerscov_val = h5py.File('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/cvae/sars-mers-cov2_val.h5', 'r')
-lt = list(open('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/label_train.txt', 'r'))
-lv = list(open('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/label_val.txt', 'r')) # open all files
+sarsmerscov_train = h5py.File('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/sars_mers_covid_dataset/cvae/sars-mers-cov2_train.h5', 'r')
+sarsmerscov_val = h5py.File('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/sars_mers_covid_dataset/cvae/sars-mers-cov2_val.h5', 'r')
+lt = list(open('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/sars_mers_covid_dataset/label_train.txt', 'r'))
+lv = list(open('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/sars_mers_covid_dataset/label_val.txt', 'r')) # open all files
 
 label_training = np.array([])
 label_validation = np.array([])

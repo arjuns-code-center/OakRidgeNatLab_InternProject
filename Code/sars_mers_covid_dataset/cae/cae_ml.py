@@ -8,7 +8,7 @@ from tensorflow.keras.layers import Conv2D, MaxPool2D, BatchNormalization, UpSam
 from tensorflow import keras
 import horovod.tensorflow.keras as hvd
 
-npzfile = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/cae/savefile.npz')
+npzfile = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/sars_mers_covid_dataset/cae/savefile.npz')
 trainset = npzfile['train']
 valset = npzfile['val']
 lt_onehot = npzfile['ltoh']

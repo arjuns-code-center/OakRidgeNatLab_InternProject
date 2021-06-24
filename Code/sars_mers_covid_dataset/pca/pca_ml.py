@@ -9,8 +9,8 @@ import horovod.tensorflow.keras as hvd
 
 print(str(time.ctime()) + ": Implementing PCA ML...")
 
-npzfile1 = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/pca/sk_clusterfiles.npz')
-npzfile2 = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/pca/savefile.npz')
+npzfile1 = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/sars_mers_covid_dataset/pca/sk_clusterfiles.npz')
+npzfile2 = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/sars_mers_covid_dataset/pca/savefile.npz')
 reduced_train = npzfile1['redtrain']
 reduced_val = npzfile1['redval']
 lt_onehot = npzfile2['ltoh']

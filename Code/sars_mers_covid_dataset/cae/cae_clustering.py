@@ -7,7 +7,7 @@ from sklearn.decomposition import PCA as sk_PCA
 
 print(str(time.ctime()) + ": Implementing PCA Clustering...")
 
-npzfile = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/cae/savefile.npz')
+npzfile = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/sars_mers_covid_dataset/cae/savefile.npz')
 train_3D = npzfile['train3D']
 val_3D = npzfile['val3D']
 

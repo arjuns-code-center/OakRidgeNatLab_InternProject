@@ -7,7 +7,7 @@ from cuml.decomposition import PCA as cuml_PCA
 
 print(str(time.ctime()) + ": Initializing...")
 
-npzfile = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/pca/savefile.npz')
+npzfile = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/sars_mers_covid_dataset/pca/savefile.npz')
 train_3D = npzfile['train']
 val_3D = npzfile['val']
 

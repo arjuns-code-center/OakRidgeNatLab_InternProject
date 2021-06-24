@@ -6,7 +6,7 @@ from sklearn.decomposition import PCA as sk_PCA
 from sklearn.cluster import KMeans as sk_kmeans
 from cuml.cluster import KMeans as cuml_kmeans
 
-npzfile = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/kmeans/savefile.npz')
+npzfile = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/sars_mers_covid_dataset/kmeans/savefile.npz')
 train_3D = npzfile['train']
 val_3D = npzfile['val']
 label_validation = npzfile['lv']
