@@ -1,0 +1,14 @@
+#!/bin/bash
+# Begin LSF directives
+#BSUB -P gen150
+#BSUB -J pca
+#BSUB -o pcaCluster.txt
+#BSUB -W 0:30
+#BSUB -nnodes 1
+# End LSF directives and begin shell commands
+
+# source summit_env.sh
+module load open-ce
+NODES=$(cat ${LSB_DJOB_HOSTFILE} | sort | uniq | grep -v login | grep -v batch | wc -l)
+
+jsrun -n${NODES} -a1 -g1 -c42 -r1  python pca_clustering.py
