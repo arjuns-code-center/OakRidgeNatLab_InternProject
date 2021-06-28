@@ -1,0 +1,26 @@
+Mon Jun 28 15:49:30 2021: Initializing...
+Mon Jun 28 15:49:31 2021: Successfully loaded all data sets!
+Mon Jun 28 15:49:31 2021: Implementing PCA Clustering with Sklearn...
+Total explained variance: 49.78138346235988
+Mon Jun 28 15:49:34 2021: Finished PCA Clustering with Sklearn in: 3.13 seconds!
+Mon Jun 28 15:49:34 2021: Transferring CPU->GPU...
+Mon Jun 28 16:01:26 2021: Successfully transferred!
+Mon Jun 28 16:01:26 2021: Implementing PCA Clustering with Rapids...
+Total explained variance: 49.781383462377235
+Mon Jun 28 16:01:33 2021: Finished PCA Clustering with Rapids in: 6.55 seconds!
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@batch2>
+Subject: Job 1118633: <pca> in cluster <summit> Done
+
+Job <pca> was submitted from host <login1> by user <arjun2612> in cluster <summit> at Mon Jun 28 15:48:26 2021
+Job was executed on host(s) <1*batch2>, in queue <batch>, as user <arjun2612> in cluster <summit> at Mon Jun 28 15:48:58 2021
+                            <42*a07n17>
+</ccs/home/arjun2612> was used as the home directory.
+</gpfs/alpine/scratch/arjun2612/gen150/ORNL_Coding/Code/pca> was used as the working directory.
+Started at Mon Jun 28 15:48:58 2021
+Terminated at Mon Jun 28 16:01:35 2021
+Results reported at Mon Jun 28 16:01:35 2021
+
+The output (if any) is above this job summary.
+
