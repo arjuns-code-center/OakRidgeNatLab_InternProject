@@ -109,12 +109,13 @@ val_pca = np.reshape(validation, (validation.shape[0], -1))
 sk_labels_val = sklearn_km(train_pca, val_pca, nc, l)
 r_labels_val = rapids_km(train_pca, val_pca, nc, single_gpu, l)
 
-npzfile2 = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/pca/sk_clusterfiles.npz')
-reduced_val = npzfile2['redval']
-
 if datatype == 'SARSMERSCOV2':
+    npzfile2 = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/pca/smc2_sk_clusterfiles.npz')
+    reduced_val = npzfile2['redval']
     np.savez('smc2_sk_plotting.npz', reslab=sk_labels_val, lv=label_validation, redval=reduced_val)
     cp.savez('smc2_r_plotting.npz', reslab=cp.array(r_labels_val), redval=cp.array(reduced_val), lv=cp.array(label_validation))
 elif datatype == 'HEA':
+    npzfile2 = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/pca/hea_sk_clusterfiles.npz')
+    reduced_val = npzfile2['redval']
     np.savez('hea_sk_plotting.npz', reslab=sk_labels_val, lv=label_validation, redval=reduced_val)
     cp.savez('hea_r_plotting.npz', reslab=cp.array(r_labels_val), redval=cp.array(reduced_val), lv=cp.array(label_validation))
