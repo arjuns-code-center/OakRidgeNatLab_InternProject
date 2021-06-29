@@ -9,7 +9,7 @@ from tensorflow import keras
 import horovod.tensorflow.keras as hvd
 
 args = argparse.ArgumentParser()
-args.add_argument('-dataset', default='SARSMERSCOV2', type=str, help='type of data loading in')
+args.add_argument('--dataset', default='SARSMERSCOV2', type=str, help='type of data loading in')
 args = args.parse_args()
 datatype = args.dataset
 
@@ -125,7 +125,7 @@ print(str(time.ctime()) + ": Creating Classification Model...")
 npzfile = None
 classification_model = None
 if datatype == 'SARSMERSCOV2':
-    npzfile = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/sars_mers_covid_dataset/smc2_dataset.npz')
+    npzfile = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/sars_mers_cov2_dataset/smc2_dataset.npz')
     classification_model = smc2_model()
 else:
     npzfile = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/hea_dataset/hea_dataset.npz')
@@ -133,6 +133,7 @@ else:
 trainset = npzfile['train']
 valset = npzfile['val']
 lt_onehot = npzfile['ltoh']
+lv_onehot = npzfile['lvoh']
 label_validation = npzfile['labval']
 
 opt = tf.keras.optimizers.Adam(0.001 * hvd.size())
@@ -176,10 +177,16 @@ predicted = np.argmax(np.round(predicted), axis=1)
 
 print(str(time.ctime()) + ": Finished predictions!")
 
-lv_onehot = np.argmax(lv_onehot)
-correct = np.where(predicted == lv_onehot)[0]
-incorrect = np.where(predicted != lv_onehot)[0]
+l = np.array([]).astype(int)
+for i in range(len(lv_onehot)):
+    l = np.append(l, np.argmax(lv_onehot[i]))
+    
+correct = np.where(predicted == l)[0]
+incorrect = np.where(predicted != l)[0]
 print("Number of Correct Classifications: " + str(len(correct)))
 print("Number of Incorrect Classifications: " + str(len(incorrect)))
 
-np.savez('plotting.npz', res=predicted, labval=label_validation)
+if datatype == 'SARSMERSCOV2':
+    np.savez('smc2_plotting.npz', res=predicted, labval=label_validation)
+elif datatype == 'HEA':
+    np.savez('hea_plotting.npz', res=predicted, labval=label_validation)

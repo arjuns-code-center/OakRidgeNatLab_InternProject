@@ -21,12 +21,13 @@ def create_model(output_size):
     model.compile(loss='categorical_crossentropy', optimizer='Adam', metrics=['categorical_accuracy'])
     return model
 
-npzfile1 = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/pca/sk_clusterfiles.npz')
 pcamodel = None
 if datatype == 'SARSMERSCOV2':
+    npzfile1 = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/pca/smc2_sk_clusterfiles.npz')
     npzfile2 = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/sars_mers_cov2_dataset/smc2_dataset.npz')
     pcamodel = create_model(3)
 elif datatype == 'HEA':
+    npzfile1 = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/pca/hea_sk_clusterfiles.npz')
     npzfile2 = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/hea_dataset/hea_dataset.npz')
     pcamodel = create_model(5)
     
@@ -62,4 +63,7 @@ print("Number of Correct Classifications: {}".format(len(correct)))
 print("Number of Incorrect Classifications: {}".format(len(incorrect)))
 print("Total Accuracy: {}".format((len(correct) / len(label_validation)) * 100))
 
-np.savez('plotting.npz', res=result, redval=reduced_val, lv=label_validation)
+if datatype == 'SARSMERSCOV2':
+    np.savez('smc2_plotting.npz', res=result, labval=label_validation)
+elif datatype == 'HEA':
+    np.savez('hea_plotting.npz', res=result, labval=label_validation)
