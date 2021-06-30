@@ -1,7 +1,6 @@
 import numpy as np
 import cupy as cp
 import time, argparse
-from sklearn.preprocessing import normalize
 from sklearn.cluster import KMeans as sk_kmeans
 from cuml.cluster import KMeans as cuml_kmeans
 from dask_ml.cluster import KMeans as cuml_dask_kmeans
@@ -27,13 +26,13 @@ def sklearn_km(train_pca, val_pca, nclusters):
 def rapids_km_single_gpu(train_pca, val_pca, nclusters):    
     kmeans = cuml_kmeans(n_clusters=nclusters, random_state=0)
     kmeans.fit(train_pca)
-    labels_val = kmeans.predict(val_pca)
+    labels_val = cp.asnumpy(cp.array(kmeans.predict(val_pca)))
     return labels_val
         
 def rapids_km_multiple_gpus(train_pca, val_pca, nclusters):
     kmeans = cuml_dask_kmeans(n_clusters=nclusters, random_state=0)
     kmeans.fit(train_pca)
-    labels_val = kmeans.predict(val_pca)
+    labels_val = cp.asnumpy(cp.array(kmeans.predict(val_pca)))
     return labels_val
 
 def convertCPU_GPU(t, v):
@@ -80,40 +79,40 @@ accuracy = (sum(sk_labels_val == l) / len(l)) * 100
 print('Accuracy: {}'.format(accuracy))
 print(str(time.ctime()) + ": Finished KMeans Clustering with Sklearn in: " + str(sk_diff) + " seconds!")
 
-# if single_gpu:
-#     print(str(time.ctime()) + ": Transferring CPU->GPU...")
-#     train_pca, val_pca = convertCPU_GPU(train_pca, val_pca)
-#     print(str(time.ctime()) + ": Successfullu transferred!")
+if single_gpu:
+    print(str(time.ctime()) + ": Transferring CPU->GPU...")
+    train_pca, val_pca = convertCPU_GPU(train_pca, val_pca)
+    print(str(time.ctime()) + ": Successfullu transferred!")
 
-#     print(str(time.ctime()) + ": Implementing KMeans Clustering with Rapids...")
-#     start = time.time()
-#     r_labels_val = rapids_km_single_gpu(train_pca, val_pca, nc)
-#     end = time.time()
-#     r_diff = round(end - start, 2)
-#     accuracy = (sum(r_labels_val == l) / len(l)) * 100
-#     print('Accuracy: {}'.format(accuracy))
-#     print(str(time.ctime()) + ": Finished KMeans Clustering with Rapids in: " + str(r_diff) + " seconds!")
-# else:
-#     print(str(time.ctime()) + ": Transferring CPU->GPUs...")
-#     train_pca, val_pca = convertCPU_GPUs(train_pca, val_pca, npartitions)
-#     print(str(time.ctime()) + ": Successfullu transferred!")
+    print(str(time.ctime()) + ": Implementing KMeans Clustering with Rapids...")
+    start = time.time()
+    r_labels_val = rapids_km_single_gpu(train_pca, val_pca, nc)
+    end = time.time()
+    r_diff = round(end - start, 2)
+    accuracy = (sum(r_labels_val == l) / len(l)) * 100
+    print('Accuracy: {}'.format(accuracy))
+    print(str(time.ctime()) + ": Finished KMeans Clustering with Rapids in: " + str(r_diff) + " seconds!")
+else:
+    print(str(time.ctime()) + ": Transferring CPU->GPUs...")
+    train_pca, val_pca = convertCPU_GPUs(train_pca, val_pca, npartitions)
+    print(str(time.ctime()) + ": Successfullu transferred!")
 
-#     print(str(time.ctime()) + ": Implementing KMeans Clustering with Rapids...")
-#     start = time.time()
-#     r_labels_val = rapids_km_multiple_gpus(train_pca, val_pca, nc)
-#     end = time.time()
-#     r_diff = round(end - start, 2)
-#     accuracy = (sum(r_labels_val == l) / len(l)) * 100
-#     print('Accuracy: {}'.format(accuracy))
-#     print(str(time.ctime()) + ": Finished KMeans Clustering with Rapids in: " + str(r_diff) + " seconds!")
+    print(str(time.ctime()) + ": Implementing KMeans Clustering with Rapids...")
+    start = time.time()
+    r_labels_val = rapids_km_multiple_gpus(train_pca, val_pca, nc)
+    end = time.time()
+    r_diff = round(end - start, 2)
+    accuracy = (sum(r_labels_val == l) / len(l)) * 100
+    print('Accuracy: {}'.format(accuracy))
+    print(str(time.ctime()) + ": Finished KMeans Clustering with Rapids in: " + str(r_diff) + " seconds!")
 
 if datatype == 'SARSMERSCOV2':
     npzfile2 = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/pca/smc2_sk_clusterfiles.npz')
     reduced_val = npzfile2['redval']
     np.savez('smc2_sk_plotting.npz', reslab=sk_labels_val, lv=label_validation, redval=reduced_val)
-    # cp.savez('smc2_r_plotting.npz', reslab=cp.asarray(r_labels_val.as_gpu_matrix()), redval=cp.array(reduced_val), lv=cp.array(label_validation))
+    np.savez('smc2_r_plotting.npz', reslab=r_labels_val, redval=reduced_val, lv=label_validation)
 elif datatype == 'HEA':
     npzfile2 = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/pca/hea_sk_clusterfiles.npz')
     reduced_val = npzfile2['redval']
     np.savez('hea_sk_plotting.npz', reslab=sk_labels_val, lv=label_validation, redval=reduced_val)
-    # cp.savez('hea_r_plotting.npz', reslab=cp.asarray(r_labels_val.as_gpu_matrix), redval=cp.array(reduced_val), lv=cp.array(label_validation))
+    np.savez('hea_r_plotting.npz', reslab=r_labels_val, redval=reduced_val, lv=label_validation)

@@ -1,45 +1,24 @@
-Lmod has detected the following error: Cannot load module
-"open-ce/1.1.3-py38-0" because these module(s) are loaded:
-   python
-
-While processing the following module(s):
-    Module fullname       Module Filename
-    ---------------       ---------------
-    open-ce/1.1.3-py38-0  /sw/summit/modulefiles/core/open-ce/1.1.3-py38-0.lua
-
-CUDA Hook Library: Failed to find symbol mem_find_dreg_entries, python: undefined symbol: __PAMI_Invalidate_region
-
-------------------------------------------------------------
-Sender: LSF System <lsfadmin@batch3>
-Subject: Job 1122663: <KMeans> in cluster <summit> Exited
-
-Job <KMeans> was submitted from host <login1> by user <arjun2612> in cluster <summit> at Tue Jun 29 14:13:16 2021
-Job was executed on host(s) <1*batch3>, in queue <batch>, as user <arjun2612> in cluster <summit> at Tue Jun 29 14:13:45 2021
-                            <42*f28n07>
-</ccs/home/arjun2612> was used as the home directory.
-</gpfs/alpine/scratch/arjun2612/gen150/ORNL_Coding/Code/kmeans> was used as the working directory.
-Started at Tue Jun 29 14:13:45 2021
-Terminated at Tue Jun 29 14:26:14 2021
-Results reported at Tue Jun 29 14:26:14 2021
-
-The output (if any) is above this job summary.
-
-Tue Jun 29 14:33:13 2021: Implementing KMeans Clustering with Sklearn...
+Wed Jun 30 09:28:16 2021: Implementing KMeans Clustering with Sklearn...
 Accuracy: 56.873333333333335
-Tue Jun 29 14:33:21 2021: Finished KMeans Clustering with Sklearn in: 7.83 seconds!
+Wed Jun 30 09:28:23 2021: Finished KMeans Clustering with Sklearn in: 7.5 seconds!
+Wed Jun 30 09:28:23 2021: Transferring CPU->GPU...
+Wed Jun 30 09:40:18 2021: Successfullu transferred!
+Wed Jun 30 09:40:18 2021: Implementing KMeans Clustering with Rapids...
+Accuracy: 53.800000000000004
+Wed Jun 30 09:40:20 2021: Finished KMeans Clustering with Rapids in: 1.84 seconds!
 
 ------------------------------------------------------------
-Sender: LSF System <lsfadmin@batch3>
-Subject: Job 1122694: <KMeans> in cluster <summit> Done
+Sender: LSF System <lsfadmin@batch4>
+Subject: Job 1124544: <KMeans> in cluster <summit> Done
 
-Job <KMeans> was submitted from host <login1> by user <arjun2612> in cluster <summit> at Tue Jun 29 14:30:46 2021
-Job was executed on host(s) <1*batch3>, in queue <batch>, as user <arjun2612> in cluster <summit> at Tue Jun 29 14:32:55 2021
-                            <42*f28n07>
+Job <KMeans> was submitted from host <login5> by user <arjun2612> in cluster <summit> at Wed Jun 30 09:27:09 2021
+Job was executed on host(s) <1*batch4>, in queue <batch>, as user <arjun2612> in cluster <summit> at Wed Jun 30 09:27:46 2021
+                            <42*h30n07>
 </ccs/home/arjun2612> was used as the home directory.
 </gpfs/alpine/scratch/arjun2612/gen150/ORNL_Coding/Code/kmeans> was used as the working directory.
-Started at Tue Jun 29 14:32:55 2021
-Terminated at Tue Jun 29 14:33:23 2021
-Results reported at Tue Jun 29 14:33:23 2021
+Started at Wed Jun 30 09:27:46 2021
+Terminated at Wed Jun 30 09:40:24 2021
+Results reported at Wed Jun 30 09:40:24 2021
 
 The output (if any) is above this job summary.
 
