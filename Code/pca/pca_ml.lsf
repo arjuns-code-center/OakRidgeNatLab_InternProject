@@ -11,4 +11,4 @@
 module load open-ce
 NODES=$(cat ${LSB_DJOB_HOSTFILE} | sort | uniq | grep -v login | grep -v batch | wc -l)
 
-jsrun -n${NODES} -a1 -g1 -c42 -r1  python pca_ml.py --dataset 'SARSMERSCOV2'
+jsrun -n${NODES} -a1 -g1 -c42 -r1  python pca_ml.py --dataset 'HEA'

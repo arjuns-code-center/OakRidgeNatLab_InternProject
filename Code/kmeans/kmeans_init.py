@@ -46,19 +46,22 @@ def convertCPU_GPUs(t, v, npartitions):
     d_vpca = d_vpca.persist()
     return d_tpca, d_vpca
     
-training = np.array([])
-validation = np.array([])
+train_pca = None
+val_pca = None
 npzfile = None
 nc = 0
-if datatype == 'SARSMERSCOV2':
+if datatype == 'SARSMERSCOV2':    
     npzfile = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/sars_mers_cov2_dataset/smc2_dataset.npz')
     training = npzfile['train3D']
     validation = npzfile['val3D']
     nc = 3
+    
+    train_pca = np.reshape(training, (training.shape[0], -1)) 
+    val_pca = np.reshape(validation, (validation.shape[0], -1)) 
 elif datatype == 'HEA':
     npzfile = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/hea_dataset/hea_dataset.npz')
-    training = npzfile['train']
-    validation = npzfile['val']
+    train_pca = npzfile['train']
+    val_pca = npzfile['val']
     nc = 5
     
 label_validation = npzfile['labval']
@@ -66,9 +69,6 @@ lv_onehot = npzfile['lvoh']
 l = np.array([]).astype(int)
 for i in range(len(lv_onehot)):
     l = np.append(l, np.argmax(lv_onehot[i]))
-
-train_pca = np.reshape(training, (training.shape[0], -1)) 
-val_pca = np.reshape(validation, (validation.shape[0], -1)) 
 
 print(str(time.ctime()) + ": Implementing KMeans Clustering with Sklearn...")
 start = time.time()

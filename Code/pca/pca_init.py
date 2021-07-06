@@ -80,22 +80,25 @@ def rapids_pca(normalized_train_pca, normalized_val_pca, single_gpu):
     return reduced_train, reduced_val
     
 print(str(time.ctime()) + ": Initializing...")
-training = np.array([])
-validation = np.array([])
+train_pca = None
+val_pca = None
 
 if datatype == 'SARSMERSCOV2':
+    training = np.array([])
+    validation = np.array([])
+    
     npzfile = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/sars_mers_cov2_dataset/smc2_dataset.npz')
     training = npzfile['train3D']
     validation = npzfile['val3D']
+    
+    train_pca = np.reshape(training, (training.shape[0], -1))  # 60000 x 576
+    val_pca = np.reshape(validation, (validation.shape[0], -1))  # 15000 x 576
 elif datatype == 'HEA':
     npzfile = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/hea_dataset/hea_dataset.npz')
-    training = npzfile['train']
-    validation = npzfile['val']
+    train_pca = npzfile['train']
+    val_pca = npzfile['val']
 
 print(str(time.ctime()) + ": Successfully loaded all data sets!")
-            
-train_pca = np.reshape(training, (training.shape[0], -1))  # 60000 x 576
-val_pca = np.reshape(validation, (validation.shape[0], -1))  # 15000 x 576
 
 normalized_train_pca = normalize(train_pca, axis=1, norm='l1')
 normalized_val_pca = normalize(val_pca, axis=1, norm='l1')
