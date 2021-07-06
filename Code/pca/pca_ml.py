@@ -64,6 +64,6 @@ print("Number of Incorrect Classifications: {}".format(len(incorrect)))
 print("Total Accuracy: {}".format((len(correct) / len(label_validation)) * 100))
 
 if datatype == 'SARSMERSCOV2':
-    np.savez('smc2_plotting.npz', res=result, labval=label_validation)
+    np.savez('smc2_plotting.npz', res=result, labval=label_validation, onehotmax=l)
 elif datatype == 'HEA':
-    np.savez('hea_plotting.npz', res=result, labval=label_validation)
+    np.savez('hea_plotting.npz', res=result, labval=label_validation, onehotmax=l)
