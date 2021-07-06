@@ -71,50 +71,50 @@ def smc2_model():
     return model
 
 def hea_model():
-    x = Input(shape=(16, 16, 16, 1))  # batch_size x 16 x 16 x 16 x 1
+    x = Input(shape=(40, 40, 40, 1))  # batch_size x 40 x 40 x 40 x 1
 
     # Encoder
-    e_conv1 = Conv3D(8, (3, 3, 3), activation='relu', padding='same')(x) # 16 x 16 x 16 x 8
-    pool1 = AveragePooling3D((2, 2, 2), padding='same')(e_conv1) # 8 x 8 x 8 x 8
+    e_conv1 = Conv3D(8, (3, 3, 3), activation='relu', padding='same')(x) # 40 x 40 x 40 x 8
+    pool1 = AveragePooling3D((2, 2, 2), padding='same')(e_conv1) # 20 x 20 x 20 x 8
     b_norm1 = BatchNormalization()(pool1)
 
-    e_conv2 = Conv3D(16, (3, 3, 3), activation='relu', padding='same')(b_norm1) # 8 x 8 x 8 x 16
-    pool2 = AveragePooling3D((2, 2, 2), padding='same')(e_conv2) # 4 x 4 x 4 x 16
+    e_conv2 = Conv3D(16, (3, 3, 3), activation='relu', padding='same')(b_norm1) # 20 x 20 x 20 x 16
+    pool2 = AveragePooling3D((2, 2, 2), padding='same')(e_conv2) # 10 x 10 x 10 x 16
     b_norm2 = BatchNormalization()(pool2)
 
-    e_conv3 = Conv3D(32, (3, 3, 3), activation='relu', padding='same')(b_norm2) # 4 x 4 x 4 x 32
-    pool3 = AveragePooling3D((2, 2, 2), padding='same')(e_conv3) # 2 x 2 x 2 x 32
+    e_conv3 = Conv3D(32, (3, 3, 3), activation='relu', padding='same')(b_norm2) # 10 x 10 x 10 x 32
+    pool3 = AveragePooling3D((2, 2, 2), padding='same')(e_conv3) # 5 x 5 x 5 x 32
     b_norm3 = BatchNormalization()(pool3)
 
-    e_conv4 = Conv3D(64, (3, 3, 3), activation='relu', padding='same')(b_norm3) # 2 x 2 x 2 x 64
+    e_conv4 = Conv3D(64, (3, 3, 3), activation='relu', padding='same')(b_norm3) # 5 x 5 x 5 x 64
     b_norm4 = BatchNormalization()(e_conv4)
 
-    e_conv5 = Conv3D(128, (3, 3, 3), activation='relu', padding='same')(b_norm4) # 2 x 2 x 2 x 128
+    e_conv5 = Conv3D(128, (3, 3, 3), activation='relu', padding='same')(b_norm4) # 5 x 5 x 5 x 128
     b_norm5 = BatchNormalization()(e_conv5)
 
     # Decoder
-    d_conv1 = Conv3D(128, (3, 3, 3), activation='relu', padding='same')(b_norm5) # 2 x 2 x 2 x 128
-    up1 = UpSampling3D((2, 2, 2))(d_conv1) # 4 x 4 x 4 x 128
+    d_conv1 = Conv3D(128, (3, 3, 3), activation='relu', padding='same')(b_norm5) # 5 x 5 x 5 x 128
+    up1 = UpSampling3D((2, 2, 2))(d_conv1) # 10 x 10 x 10 x 128
     b_norm6 = BatchNormalization()(up1)
 
-    d_conv2 = Conv3D(64, (3, 3, 3), activation='relu', padding='same')(b_norm6) # 4 x 4 x 4 x 64
-    up2 = UpSampling3D((2, 2, 2))(d_conv2) # 8 x 8 x 8 x 64
+    d_conv2 = Conv3D(64, (3, 3, 3), activation='relu', padding='same')(b_norm6) # 10 x 10 x 10 x 64
+    up2 = UpSampling3D((2, 2, 2))(d_conv2) # 20 x 20 x 20 x 64
     b_norm7 = BatchNormalization()(up2)
 
-    d_conv3 = Conv3D(32, (3, 3, 3), activation='relu', padding='same')(b_norm7) # 8 x 8 x 8 x 32
-    up3 = UpSampling3D((2, 2, 2))(d_conv3) # 16 x 16 x 16 x 32
+    d_conv3 = Conv3D(32, (3, 3, 3), activation='relu', padding='same')(b_norm7) # 20 x 20 x 20 x 32
+    up3 = UpSampling3D((2, 2, 2))(d_conv3) # 40 x 40 x 40 x 32
     b_norm8 = BatchNormalization()(up3)
 
-    d_conv4 = Conv3D(16, (3, 3, 3), activation='relu', padding='same')(b_norm8) # 16 x 16 x 16 x 16
+    d_conv4 = Conv3D(16, (3, 3, 3), activation='relu', padding='same')(b_norm8) # 40 x 40 x 40 x 16
     b_norm9 = BatchNormalization()(d_conv4)
 
-    d_conv5 = Conv3D(8, (3, 3, 3), activation='relu', padding='same')(b_norm9) # 16 x 16 x 16 x 8
+    d_conv5 = Conv3D(8, (3, 3, 3), activation='relu', padding='same')(b_norm9) # 40 x 40 x 40 x 8
     b_norm10 = BatchNormalization()(d_conv5)
 
-    d_conv6 = Conv3D(1, (1, 1, 1), activation='relu', padding='same')(b_norm10) # 16 x 16 x 16 x 1
+    d_conv6 = Conv3D(1, (1, 1, 1), activation='relu', padding='same')(b_norm10) # 40 x 40 x 40 x 1
     b_norm11 = BatchNormalization()(d_conv6)
 
-    f1 = Flatten()(b_norm11) # add a fully connected layer after just the autoencoder. 4096 x 1
+    f1 = Flatten()(b_norm11) # add a fully connected layer after just the autoencoder. 64000 x 1
     r = Dense(5, activation='softmax')(f1) # 5 x 1
 
     model = Model(x, r) # compile full model
