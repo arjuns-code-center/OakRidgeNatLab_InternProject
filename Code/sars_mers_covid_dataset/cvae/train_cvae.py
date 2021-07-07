@@ -1,29 +1,31 @@
 import os, sys, errno
 import argparse 
-from cvae.CVAE import run_cvae  
-import numpy as np 
+import CVAE
+
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--train_file", default='cvae_input.h5', help="Input: contact map h5 file")
-parser.add_argument("--val_file", default='cvae_input.h5', help="Input: contact map h5 file")
-parser.add_argument("-d", "--dim", default=3, help="Number of dimensions in latent space")
-parser.add_argument("-batch_size", default=32, type=int, help="batch size")
-parser.add_argument("-epochs", default=100, type=int, help="number of epochs")
+parser.add_argument("-f", default='cvae_input.h5', help="Input: contact map h5 file")
+# parser.add_argument("-o", help="output: cvae weight file. (Keras cannot load model directly, will check again...)")
+parser.add_argument("-d", "--dim", default=3, help="Number of dimensions in latent space") 
+parser.add_argument("-gpu", default=0, help="gpu_id")
 
 args = parser.parse_args()
 
-train_file = args.train_file
-val_file = args.val_file
-hyper_dim = int(args.dim) 
-batch_size = args.batch_size
-epochs = args.epochs
+print args.f, args.dim, args.gpu 
 
-if not os.path.exists(train_file):
-    raise IOError('Input file doesn\'t exist...')
+cvae_input = args.f
+hyper_dim = args.dim 
+gpu_id = args.gpu 
 
+if not os.path.exists(cvae_input):
+    raise IOError('Input file doesn\'t exist...') 
 
 if __name__ == '__main__': 
-    cvae = run_cvae(train_file, val_file, hyper_dim=hyper_dim, 
-                    batch_size=batch_size, epochs=epochs)
+    cvae = CVAE.run_cvae(gpu_id, cvae_input, hyper_dim=hyper_dim)
 
+    model_weight = os.path.join(model_dir, 'cvae_weight.h5')
+    model_file = os.path.join(model_dir, 'cvae_model.h5')
+
+    cvae.model.save_weights(model_weight)
+    cvae.save(model_file)

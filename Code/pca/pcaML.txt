@@ -1,3 +1,4 @@
+SARSMERSCOV2 Dataset:
 Warning: OMP_NUM_THREADS=16 is greater than available PU's
 2021-06-29 10:36:12.030069: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.10.2
 2021-06-29 10:36:20.416141: I tensorflow/compiler/jit/xla_cpu_device.cc:41] Not creating XLA devices, tf_xla_enable_xla_devices not set
@@ -58,6 +59,7 @@ Results reported at Tue Jun 29 10:37:15 2021
 
 The output (if any) is above this job summary.
 
+HEA Dataset: 
 Warning: OMP_NUM_THREADS=16 is greater than available PU's
 2021-07-06 11:38:17.345349: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.10.2
 2021-07-06 11:38:25.642273: I tensorflow/compiler/jit/xla_cpu_device.cc:41] Not creating XLA devices, tf_xla_enable_xla_devices not set
@@ -118,6 +120,7 @@ Results reported at Tue Jul  6 11:38:36 2021
 
 The output (if any) is above this job summary.
 
+HEA Dataset:
 Warning: OMP_NUM_THREADS=16 is greater than available PU's
 2021-07-06 15:36:25.711308: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.10.2
 2021-07-06 15:36:30.031444: I tensorflow/compiler/jit/xla_cpu_device.cc:41] Not creating XLA devices, tf_xla_enable_xla_devices not set

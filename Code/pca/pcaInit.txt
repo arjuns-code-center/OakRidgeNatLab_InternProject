@@ -1,3 +1,4 @@
+SARSMERSCOV2 Dataset 1 GPU:
 Tue Jun 29 10:14:08 2021: Initializing...
 Tue Jun 29 10:14:09 2021: Successfully loaded all data sets!
 Tue Jun 29 10:14:09 2021: Implementing PCA Clustering with Sklearn...
@@ -24,6 +25,7 @@ Results reported at Tue Jun 29 10:26:10 2021
 
 The output (if any) is above this job summary.
 
+SARSMERSCOV2 Dataset 2 GPUs:
 Fri Jul  2 11:51:36 2021: Initializing...
 Fri Jul  2 11:51:37 2021: Successfully loaded all data sets!
 Fri Jul  2 11:51:37 2021: Implementing PCA Clustering with Sklearn...
@@ -50,32 +52,7 @@ Results reported at Fri Jul  2 12:04:10 2021
 
 The output (if any) is above this job summary.
 
-Tue Jul  6 11:21:08 2021: Initializing...
-Tue Jul  6 11:21:09 2021: Successfully loaded all data sets!
-Tue Jul  6 11:21:09 2021: Implementing PCA Clustering with Sklearn...
-Total explained variance: 9.916426878765842
-Tue Jul  6 11:21:11 2021: Finished PCA Clustering with Sklearn in: 1.6 seconds!
-Tue Jul  6 11:21:11 2021: Transferring CPU->GPU...
-Tue Jul  6 11:33:05 2021: Successfully transferred!
-Tue Jul  6 11:33:05 2021: Implementing PCA Clustering with Rapids...
-Total explained variance: 9.91642688087154
-Tue Jul  6 11:33:13 2021: Finished PCA Clustering with Rapids in: 7.22 seconds!
-
-------------------------------------------------------------
-Sender: LSF System <lsfadmin@batch2>
-Subject: Job 1134025: <pca> in cluster <summit> Done
-
-Job <pca> was submitted from host <login4> by user <arjun2612> in cluster <summit> at Tue Jul  6 11:20:11 2021
-Job was executed on host(s) <1*batch2>, in queue <batch>, as user <arjun2612> in cluster <summit> at Tue Jul  6 11:20:42 2021
-                            <42*a01n11>
-</ccs/home/arjun2612> was used as the home directory.
-</gpfs/alpine/scratch/arjun2612/gen150/ORNL_Coding/Code/pca> was used as the working directory.
-Started at Tue Jul  6 11:20:42 2021
-Terminated at Tue Jul  6 11:33:15 2021
-Results reported at Tue Jul  6 11:33:15 2021
-
-The output (if any) is above this job summary.
-
+HEA Dataset 1 GPU:
 Tue Jul  6 14:39:06 2021: Initializing...
 Tue Jul  6 14:39:06 2021: Successfully loaded all data sets!
 Tue Jul  6 14:39:06 2021: Implementing PCA Clustering with Sklearn...

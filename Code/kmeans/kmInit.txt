@@ -1,3 +1,4 @@
+SARSMERSCOV2 Dataset 1 GPU:
 Wed Jun 30 09:28:16 2021: Implementing KMeans Clustering with Sklearn...
 Accuracy: 56.873333333333335
 Wed Jun 30 09:28:23 2021: Finished KMeans Clustering with Sklearn in: 7.5 seconds!
@@ -22,30 +23,7 @@ Results reported at Wed Jun 30 09:40:24 2021
 
 The output (if any) is above this job summary.
 
-Tue Jul  6 11:48:47 2021: Implementing KMeans Clustering with Sklearn...
-Accuracy: 2.1999999999999997
-Tue Jul  6 11:48:56 2021: Finished KMeans Clustering with Sklearn in: 9.33 seconds!
-Tue Jul  6 11:48:56 2021: Transferring CPU->GPU...
-Tue Jul  6 12:00:55 2021: Successfullu transferred!
-Tue Jul  6 12:00:55 2021: Implementing KMeans Clustering with Rapids...
-Accuracy: 5.7
-Tue Jul  6 12:00:58 2021: Finished KMeans Clustering with Rapids in: 2.44 seconds!
-
-------------------------------------------------------------
-Sender: LSF System <lsfadmin@batch2>
-Subject: Job 1134097: <KMeans> in cluster <summit> Done
-
-Job <KMeans> was submitted from host <login1> by user <arjun2612> in cluster <summit> at Tue Jul  6 11:47:54 2021
-Job was executed on host(s) <1*batch2>, in queue <batch>, as user <arjun2612> in cluster <summit> at Tue Jul  6 11:48:16 2021
-                            <42*a22n03>
-</ccs/home/arjun2612> was used as the home directory.
-</gpfs/alpine/scratch/arjun2612/gen150/ORNL_Coding/Code/kmeans> was used as the working directory.
-Started at Tue Jul  6 11:48:16 2021
-Terminated at Tue Jul  6 12:01:01 2021
-Results reported at Tue Jul  6 12:01:01 2021
-
-The output (if any) is above this job summary.
-
+HEA Dataset 1 GPU:
 Tue Jul  6 15:52:19 2021: Implementing KMeans Clustering with Sklearn...
 Accuracy: 17.2
 Tue Jul  6 15:52:20 2021: Finished KMeans Clustering with Sklearn in: 1.13 seconds!
