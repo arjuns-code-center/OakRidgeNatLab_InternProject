@@ -181,3 +181,64 @@ Results reported at Tue Jul  6 15:36:39 2021
 
 The output (if any) is above this job summary.
 
+SARSMERSCOV2 Dataset:
+Warning: OMP_NUM_THREADS=16 is greater than available PU's
+2021-07-08 16:09:35.141150: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.10.2
+2021-07-08 16:09:40.927776: I tensorflow/compiler/jit/xla_cpu_device.cc:41] Not creating XLA devices, tf_xla_enable_xla_devices not set
+2021-07-08 16:09:40.930877: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcuda.so.1
+2021-07-08 16:09:40.995741: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1720] Found device 0 with properties: 
+pciBusID: 0004:04:00.0 name: Tesla V100-SXM2-16GB computeCapability: 7.0
+coreClock: 1.53GHz coreCount: 80 deviceMemorySize: 15.75GiB deviceMemoryBandwidth: 836.37GiB/s
+2021-07-08 16:09:40.995784: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.10.2
+2021-07-08 16:09:41.000835: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcublas.so.10
+2021-07-08 16:09:41.000888: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcublasLt.so.10
+2021-07-08 16:09:41.004007: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcufft.so.10
+2021-07-08 16:09:41.006034: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcurand.so.10
+2021-07-08 16:09:41.009357: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcusolver.so.10
+2021-07-08 16:09:41.012219: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcusparse.so.10
+2021-07-08 16:09:41.018468: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudnn.so.7
+2021-07-08 16:09:41.023889: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1862] Adding visible gpu devices: 0
+2021-07-08 16:09:41.024332: I tensorflow/compiler/jit/xla_gpu_device.cc:99] Not creating XLA devices, tf_xla_enable_xla_devices not set
+2021-07-08 16:09:41.026996: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1720] Found device 0 with properties: 
+pciBusID: 0004:04:00.0 name: Tesla V100-SXM2-16GB computeCapability: 7.0
+coreClock: 1.53GHz coreCount: 80 deviceMemorySize: 15.75GiB deviceMemoryBandwidth: 836.37GiB/s
+2021-07-08 16:09:41.027026: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.10.2
+2021-07-08 16:09:41.027051: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcublas.so.10
+2021-07-08 16:09:41.027071: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcublasLt.so.10
+2021-07-08 16:09:41.027089: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcufft.so.10
+2021-07-08 16:09:41.027108: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcurand.so.10
+2021-07-08 16:09:41.027126: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcusolver.so.10
+2021-07-08 16:09:41.027144: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcusparse.so.10
+2021-07-08 16:09:41.027162: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudnn.so.7
+2021-07-08 16:09:41.032293: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1862] Adding visible gpu devices: 0
+2021-07-08 16:09:41.032323: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.10.2
+2021-07-08 16:09:41.646550: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1261] Device interconnect StreamExecutor with strength 1 edge matrix:
+2021-07-08 16:09:41.646596: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1267]      0 
+2021-07-08 16:09:41.646606: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1280] 0:   N 
+2021-07-08 16:09:41.654704: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1406] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 14751 MB memory) -> physical GPU (device: 0, name: Tesla V100-SXM2-16GB, pci bus id: 0004:04:00.0, compute capability: 7.0)
+2021-07-08 16:09:42.103609: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:116] None of the MLIR optimization passes are enabled (registered 2)
+2021-07-08 16:09:42.105736: I tensorflow/core/platform/profile_utils/cpu_utils.cc:112] CPU Frequency: 3450000000 Hz
+2021-07-08 16:09:42.594962: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcublas.so.10
+Thu Jul  8 16:09:42 2021: Implementing PCA ML...
+Thu Jul  8 16:10:33 2021: Finished PCA ML
+Thu Jul  8 16:10:33 2021: Predicting with PCA Model...
+Thu Jul  8 16:10:34 2021: Finished predictions!
+Number of Correct Classifications: 10698
+Number of Incorrect Classifications: 4302
+Total Accuracy: 71.32
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@batch1>
+Subject: Job 1140822: <pca> in cluster <summit> Done
+
+Job <pca> was submitted from host <login4> by user <arjun2612> in cluster <summit> at Thu Jul  8 16:08:45 2021
+Job was executed on host(s) <1*batch1>, in queue <batch>, as user <arjun2612> in cluster <summit> at Thu Jul  8 16:09:19 2021
+                            <42*h50n12>
+</ccs/home/arjun2612> was used as the home directory.
+</gpfs/alpine/scratch/arjun2612/gen150/ORNL_Coding/Code/pca> was used as the working directory.
+Started at Thu Jul  8 16:09:19 2021
+Terminated at Thu Jul  8 16:10:36 2021
+Results reported at Thu Jul  8 16:10:36 2021
+
+The output (if any) is above this job summary.
+
