@@ -6,19 +6,19 @@ from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras import Input, Model
 from tensorflow.keras.layers import Conv2D, Conv3D, AveragePooling2D, AveragePooling3D, BatchNormalization, UpSampling2D, UpSampling3D, Flatten, Dense
 from tensorflow import keras
-import horovod.tensorflow.keras as hvd
+# import horovod.tensorflow.keras as hvd
 
 args = argparse.ArgumentParser()
 args.add_argument('--dataset', default='SARSMERSCOV2', type=str, help='type of data loading in')
 args = args.parse_args()
 datatype = args.dataset
 
-hvd.init()
-gpus = tf.config.experimental.list_physical_devices('GPU')
-for gpu in gpus:
-    tf.config.experimental.set_memory_growth(gpu, True)
-if gpus:
-    tf.config.experimental.set_visible_devices(gpus[hvd.local_rank()], 'GPU')
+# hvd.init()
+# gpus = tf.config.experimental.list_physical_devices('GPU')
+# for gpu in gpus:
+#     tf.config.experimental.set_memory_growth(gpu, True)
+# if gpus:
+#     tf.config.experimental.set_visible_devices(gpus[hvd.local_rank()], 'GPU')
 
 def smc2_model():
     x = Input(shape=(24, 24, 1))  # 24 x 24 x 1
@@ -74,38 +74,38 @@ def hea_model():
     x = Input(shape=(40, 40, 40, 1))  # batch_size x 40 x 40 x 40 x 1
 
     # Encoder
-    e_conv1 = Conv3D(8, (3, 3, 3), activation='relu', padding='same')(x) # 40 x 40 x 40 x 8
+    e_conv1 = Conv3D(32, (3, 3, 3), activation='relu', padding='same')(x) # 40 x 40 x 40 x 8
     pool1 = AveragePooling3D((2, 2, 2), padding='same')(e_conv1) # 20 x 20 x 20 x 8
     b_norm1 = BatchNormalization()(pool1)
 
-    e_conv2 = Conv3D(16, (3, 3, 3), activation='relu', padding='same')(b_norm1) # 20 x 20 x 20 x 16
+    e_conv2 = Conv3D(64, (3, 3, 3), activation='relu', padding='same')(b_norm1) # 20 x 20 x 20 x 16
     pool2 = AveragePooling3D((2, 2, 2), padding='same')(e_conv2) # 10 x 10 x 10 x 16
     b_norm2 = BatchNormalization()(pool2)
 
-    e_conv3 = Conv3D(32, (3, 3, 3), activation='relu', padding='same')(b_norm2) # 10 x 10 x 10 x 32
+    e_conv3 = Conv3D(128, (3, 3, 3), activation='relu', padding='same')(b_norm2) # 10 x 10 x 10 x 32
     pool3 = AveragePooling3D((2, 2, 2), padding='same')(e_conv3) # 5 x 5 x 5 x 32
     b_norm3 = BatchNormalization()(pool3)
 
-    e_conv4 = Conv3D(64, (3, 3, 3), activation='relu', padding='same')(b_norm3) # 5 x 5 x 5 x 64
+    e_conv4 = Conv3D(256, (3, 3, 3), activation='relu', padding='same')(b_norm3) # 5 x 5 x 5 x 64
     b_norm4 = BatchNormalization()(e_conv4)
 
-    e_conv5 = Conv3D(128, (3, 3, 3), activation='relu', padding='same')(b_norm4) # 5 x 5 x 5 x 128
+    e_conv5 = Conv3D(512, (3, 3, 3), activation='relu', padding='same')(b_norm4) # 5 x 5 x 5 x 128
     b_norm5 = BatchNormalization()(e_conv5)
 
     # Decoder
-    d_conv1 = Conv3D(128, (3, 3, 3), activation='relu', padding='same')(b_norm5) # 5 x 5 x 5 x 128
+    d_conv1 = Conv3D(256, (3, 3, 3), activation='relu', padding='same')(b_norm5) # 5 x 5 x 5 x 128
     up1 = UpSampling3D((2, 2, 2))(d_conv1) # 10 x 10 x 10 x 128
     b_norm6 = BatchNormalization()(up1)
 
-    d_conv2 = Conv3D(64, (3, 3, 3), activation='relu', padding='same')(b_norm6) # 10 x 10 x 10 x 64
+    d_conv2 = Conv3D(128, (3, 3, 3), activation='relu', padding='same')(b_norm6) # 10 x 10 x 10 x 64
     up2 = UpSampling3D((2, 2, 2))(d_conv2) # 20 x 20 x 20 x 64
     b_norm7 = BatchNormalization()(up2)
 
-    d_conv3 = Conv3D(32, (3, 3, 3), activation='relu', padding='same')(b_norm7) # 20 x 20 x 20 x 32
+    d_conv3 = Conv3D(64, (3, 3, 3), activation='relu', padding='same')(b_norm7) # 20 x 20 x 20 x 32
     up3 = UpSampling3D((2, 2, 2))(d_conv3) # 40 x 40 x 40 x 32
     b_norm8 = BatchNormalization()(up3)
 
-    d_conv4 = Conv3D(16, (3, 3, 3), activation='relu', padding='same')(b_norm8) # 40 x 40 x 40 x 16
+    d_conv4 = Conv3D(32, (3, 3, 3), activation='relu', padding='same')(b_norm8) # 40 x 40 x 40 x 16
     b_norm9 = BatchNormalization()(d_conv4)
 
     d_conv5 = Conv3D(8, (3, 3, 3), activation='relu', padding='same')(b_norm9) # 40 x 40 x 40 x 8
@@ -136,35 +136,24 @@ lt_onehot = npzfile['ltoh']
 lv_onehot = npzfile['lvoh']
 label_validation = npzfile['labval']
 
-opt = tf.keras.optimizers.Adam(0.001 * hvd.size())
-opt = hvd.DistributedOptimizer(opt)
-classification_model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['categorical_accuracy'])
+# opt = tf.keras.optimizers.Adam(0.001 * hvd.size())
+# opt = hvd.DistributedOptimizer(opt)
+classification_model.compile(loss='categorical_crossentropy', optimizer='Adam', metrics=['categorical_accuracy'])
 
 print(str(time.ctime()) + ": Successfully created Classification Model")
-        
-train_X, valid_X, train_label, valid_label = train_test_split(trainset, lt_onehot, test_size=0.2, random_state=0)
-
 print(str(time.ctime()) + ": Training Classification Model...")
 
-epochs = 20
-batch_size = 64
-# early_stop = EarlyStopping(monitor='val_categorical_accuracy', patience=5, restore_best_weights=True)
-callbacks = [hvd.callbacks.BroadcastGlobalVariablesCallback(0)]
+epochs = 10
+batch_size = 50
+early_stop = EarlyStopping(monitor='categorical_accuracy', patience=5, restore_best_weights=True)
+# callbacks = [hvd.callbacks.BroadcastGlobalVariablesCallback(0)]
 
 # if hvd.rank() == 0:
 #     callbacks.append(tf.keras.callbacks.ModelCheckpoint('./best_checkpoint-{epoch}.h5', monitor='val_categorical_accuracy', mode='max', save_best_only=True))
 
-classify_labels = classification_model.fit(train_X, train_label, batch_size=batch_size, epochs=epochs, verbose=0, callbacks=callbacks, validation_data=(valid_X, valid_label))
+classify_labels = classification_model.fit(trainset, lt_onehot, batch_size=batch_size, epochs=epochs, verbose=0, callbacks=early_stop)
 
 print(str(time.ctime()) + ": Finished training!")
-
-print(str(time.ctime()) + ": Evaluating Classification Model...")
-
-test_eval = classification_model.evaluate(valid_X, valid_label)
-print('Loss: {}'.format(test_eval[0]))
-print('Accuracy: {}'.format(test_eval[1] * 100))
-
-print(str(time.ctime()) + ": Finished evaluation!")
 
 print(str(time.ctime()) + ": Predicting with Classification Model...")
 
@@ -172,6 +161,14 @@ predicted = classification_model.predict(valset)
 predicted = np.argmax(np.round(predicted), axis=1)
 
 print(str(time.ctime()) + ": Finished predictions!")
+
+print(str(time.ctime()) + ": Evaluating Classification Model...")
+
+test_eval = classification_model.evaluate(valset, lv_onehot)
+print('Loss: {}'.format(test_eval[0]))
+print('Accuracy: {}'.format(test_eval[1] * 100))
+
+print(str(time.ctime()) + ": Finished evaluation!")
 
 l = np.array([]).astype(int)
 for i in range(len(lv_onehot)):
