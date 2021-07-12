@@ -6,19 +6,19 @@ from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras import Input, Model
 from tensorflow.keras.layers import Conv2D, Conv3D, AveragePooling2D, AveragePooling3D, BatchNormalization, UpSampling2D, UpSampling3D, Flatten, Dense
 from tensorflow import keras
-# import horovod.tensorflow.keras as hvd
+import horovod.tensorflow.keras as hvd
 
 args = argparse.ArgumentParser()
 args.add_argument('--dataset', default='SARSMERSCOV2', type=str, help='type of data loading in')
 args = args.parse_args()
 datatype = args.dataset
 
-# hvd.init()
-# gpus = tf.config.experimental.list_physical_devices('GPU')
-# for gpu in gpus:
-#     tf.config.experimental.set_memory_growth(gpu, True)
-# if gpus:
-#     tf.config.experimental.set_visible_devices(gpus[hvd.local_rank()], 'GPU')
+hvd.init()
+gpus = tf.config.experimental.list_physical_devices('GPU')
+for gpu in gpus:
+    tf.config.experimental.set_memory_growth(gpu, True)
+if gpus:
+    tf.config.experimental.set_visible_devices(gpus[hvd.local_rank()], 'GPU')
 
 def smc2_model():
     x = Input(shape=(24, 24, 1))  # 24 x 24 x 1
@@ -136,22 +136,22 @@ lt_onehot = npzfile['ltoh']
 lv_onehot = npzfile['lvoh']
 label_validation = npzfile['labval']
 
-# opt = tf.keras.optimizers.Adam(0.001 * hvd.size())
-# opt = hvd.DistributedOptimizer(opt)
-classification_model.compile(loss='categorical_crossentropy', optimizer='Adam', metrics=['categorical_accuracy'])
+opt = tf.keras.optimizers.Adam(0.001 * hvd.size())
+opt = hvd.DistributedOptimizer(opt)
+classification_model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['categorical_accuracy'])
 
 print(str(time.ctime()) + ": Successfully created Classification Model")
 print(str(time.ctime()) + ": Training Classification Model...")
 
 epochs = 10
 batch_size = 50
-early_stop = EarlyStopping(monitor='categorical_accuracy', patience=5, restore_best_weights=True)
-# callbacks = [hvd.callbacks.BroadcastGlobalVariablesCallback(0)]
+# early_stop = EarlyStopping(monitor='categorical_accuracy', patience=5, restore_best_weights=True)
+callbacks = [hvd.callbacks.BroadcastGlobalVariablesCallback(0)]
 
 # if hvd.rank() == 0:
 #     callbacks.append(tf.keras.callbacks.ModelCheckpoint('./best_checkpoint-{epoch}.h5', monitor='val_categorical_accuracy', mode='max', save_best_only=True))
 
-classify_labels = classification_model.fit(trainset, lt_onehot, batch_size=batch_size, epochs=epochs, verbose=0, callbacks=early_stop)
+classify_labels = classification_model.fit(trainset, lt_onehot, batch_size=batch_size, epochs=epochs, verbose=0, callbacks=callbacks)
 
 print(str(time.ctime()) + ": Finished training!")
 

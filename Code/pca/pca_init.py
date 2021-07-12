@@ -5,6 +5,8 @@ from sklearn.preprocessing import normalize
 from sklearn.decomposition import PCA as sk_PCA
 from cuml.decomposition import PCA as cuml_PCA
 from dask_ml.decomposition import PCA as cuml_dask_PCA
+from dask_cuda import LocalCUDACluster
+from dask.distributed import Client
 import cudf
 import dask, dask_cudf
 
@@ -54,6 +56,9 @@ def rapids_pca(normalized_train_pca, normalized_val_pca, single_gpu):
         print('Total explained variance: {}'.format(pca.explained_variance_ratio_.sum() * 100))
     else:
         print(str(time.ctime()) + ": Transferring CPU->GPUs...")
+        cluster = LocalCUDACluster(n_workers=npartitions, threads_per_worker=1)
+        client  = Client(cluster)
+        
         p_ntpca = dask.dataframe.from_pandas(t_df, npartitions=npartitions)
         p_nvpca = dask.dataframe.from_pandas(v_df, npartitions=npartitions)
         
@@ -67,17 +72,23 @@ def rapids_pca(normalized_train_pca, normalized_val_pca, single_gpu):
         
         start = time.time()
         
-        pca = cuml_dask_PCA(n_components=2)  # 2 PCs
-        pca.fit(d_ntpca)
-        reduced_train = cp.array(pca.transform(d_ntpca))
-        reduced_val = cp.array(pca.transform(d_nvpca)) # reduce dimensions of both sets
-        print('Total explained variance: {}'.format(pca.explained_variance_ratio_.sum() * 100))
+        reduced_train, reduced_val = client.submit(helperMethod, d_ntpca, d_nvpca)
+        reduced_train = reduced_train.result()
+        reduced_val = reduced_val.result()
 
     end = time.time()
     r_diff = round(end - start, 2)
 
     print(str(time.ctime()) + ": Finished PCA Clustering with Rapids in: " + str(r_diff) + " seconds!")
     return reduced_train, reduced_val
+
+def helperMethod(dt, dv):
+    pca = cuml_dask_PCA(n_components=2)  # 2 PCs
+    pca.fit(dt)
+    rtrain = cp.array(pca.transform(dt))
+    rval = cp.array(pca.transform(dv)) # reduce dimensions of both sets
+    print('Total explained variance: {}'.format(pca.explained_variance_ratio_.sum() * 100))
+    return rtrain, rval
     
 print(str(time.ctime()) + ": Initializing...")
 train_pca = None
@@ -103,12 +114,12 @@ print(str(time.ctime()) + ": Successfully loaded all data sets!")
 normalized_train_pca = normalize(train_pca, axis=1, norm='l1')
 normalized_val_pca = normalize(val_pca, axis=1, norm='l1')
 
-sk_rt, sk_rv = sklearn_pca(normalized_train_pca, normalized_val_pca)
+# sk_rt, sk_rv = sklearn_pca(normalized_train_pca, normalized_val_pca)
 r_rt, r_rv = rapids_pca(normalized_train_pca, normalized_val_pca, single_gpu)
 
 if datatype == 'SARSMERSCOV2':
-    np.savez('smc2_sk_clusterfiles.npz', redtrain=sk_rt, redval=sk_rv)
+    # np.savez('smc2_sk_clusterfiles.npz', redtrain=sk_rt, redval=sk_rv)
     cp.savez('smc2_r_clusterfiles.npz', redtrain=r_rt, redval=r_rv)
 elif datatype == 'HEA':
-    np.savez('hea_sk_clusterfiles.npz', redtrain=sk_rt, redval=sk_rv)
+    # np.savez('hea_sk_clusterfiles.npz', redtrain=sk_rt, redval=sk_rv)
     cp.savez('hea_r_clusterfiles.npz', redtrain=r_rt, redval=r_rv)
