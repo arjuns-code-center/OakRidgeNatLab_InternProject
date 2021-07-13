@@ -1,32 +1,30 @@
 #!/bin/bash
 # Begin LSF directives
-#BSUB -P stf011
+#BSUB -P gen150
 #BSUB -J test
 #BSUB -o tst.o%J
 #BSUB -W 2:00
-#BSUB -nnodes 16
+#BSUB -nnodes 1
 #BSUB -q killable 
 # End LSF directives and begin shell commands
 
 source env-summit.sh
 NODES=$(cat ${LSB_DJOB_HOSTFILE} | sort | uniq | grep -v login | grep -v batch | wc -l)
 
-epochs=100
-batch=1
+epochs=50
+batch=100
 dims=12
-train_input=../HEA_train.npy
-val_input=../HEA_val.npy
 
 #train
 jsrun -n${NODES} -a 6 -g 6 -c42 -r1  python train_vae.py \
                                             -d $dims \
-                                            --train_file $train_input \
-                                            --val_file $val_input \
+                                            --train_file HEA_train.npy \
+                                            --val_file HEA_val.npy \
                                             -batch_size $batch  \
                                             -epochs $epochs
 
 #inference 
-jsrun -n 1 -a 1 -c 42 -g 1 -r1 python src/inference.py -d $dims -i $val_input -w vae_weight-${epochs}.h5 
+jsrun -n 1 -a 1 -c 42 -g 1 -r1 python inference.py -d $dims -i HEA_val.npy -w vae_weight-${epochs}.h5 
 
 #t-sne
 jsrun -n 1 -a 1 -g 1 --smpiargs "off" python tsne.py -e vae_output-embeddings.npy -lt label_T_val.npy

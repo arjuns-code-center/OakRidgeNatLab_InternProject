@@ -1,6 +1,6 @@
 import os 
 import argparse 
-from src.vae import run_vae
+import vae
 import numpy as np 
 
 parser = argparse.ArgumentParser()
@@ -23,6 +23,6 @@ if not os.path.exists(train_file):
 
 
 if __name__ == '__main__': 
-    vae = run_vae(train_file, val_file, hyper_dim=hyper_dim, 
+    vaenc = vae.run_vae(train_file, val_file, hyper_dim=hyper_dim, 
                     batch_size=batch_size, epochs=epochs)
 

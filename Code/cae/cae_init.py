@@ -74,38 +74,38 @@ def hea_model():
     x = Input(shape=(40, 40, 40, 1))  # batch_size x 40 x 40 x 40 x 1
 
     # Encoder
-    e_conv1 = Conv3D(32, (3, 3, 3), activation='relu', padding='same')(x) # 40 x 40 x 40 x 8
-    pool1 = AveragePooling3D((2, 2, 2), padding='same')(e_conv1) # 20 x 20 x 20 x 8
+    e_conv1 = Conv3D(32, (3, 3, 3), activation='relu', padding='same')(x) # 40 x 40 x 40 x 32
+    pool1 = AveragePooling3D((2, 2, 2), padding='same')(e_conv1) # 20 x 20 x 20 x 32
     b_norm1 = BatchNormalization()(pool1)
 
-    e_conv2 = Conv3D(64, (3, 3, 3), activation='relu', padding='same')(b_norm1) # 20 x 20 x 20 x 16
-    pool2 = AveragePooling3D((2, 2, 2), padding='same')(e_conv2) # 10 x 10 x 10 x 16
+    e_conv2 = Conv3D(64, (3, 3, 3), activation='relu', padding='same')(b_norm1) # 20 x 20 x 20 x 64
+    pool2 = AveragePooling3D((2, 2, 2), padding='same')(e_conv2) # 10 x 10 x 10 x 64
     b_norm2 = BatchNormalization()(pool2)
 
-    e_conv3 = Conv3D(128, (3, 3, 3), activation='relu', padding='same')(b_norm2) # 10 x 10 x 10 x 32
-    pool3 = AveragePooling3D((2, 2, 2), padding='same')(e_conv3) # 5 x 5 x 5 x 32
+    e_conv3 = Conv3D(128, (3, 3, 3), activation='relu', padding='same')(b_norm2) # 10 x 10 x 10 x 128
+    pool3 = AveragePooling3D((2, 2, 2), padding='same')(e_conv3) # 5 x 5 x 5 x 128
     b_norm3 = BatchNormalization()(pool3)
 
-    e_conv4 = Conv3D(256, (3, 3, 3), activation='relu', padding='same')(b_norm3) # 5 x 5 x 5 x 64
+    e_conv4 = Conv3D(256, (3, 3, 3), activation='relu', padding='same')(b_norm3) # 5 x 5 x 5 x 256
     b_norm4 = BatchNormalization()(e_conv4)
 
-    e_conv5 = Conv3D(512, (3, 3, 3), activation='relu', padding='same')(b_norm4) # 5 x 5 x 5 x 128
+    e_conv5 = Conv3D(512, (3, 3, 3), activation='relu', padding='same')(b_norm4) # 5 x 5 x 5 x 512
     b_norm5 = BatchNormalization()(e_conv5)
 
     # Decoder
-    d_conv1 = Conv3D(256, (3, 3, 3), activation='relu', padding='same')(b_norm5) # 5 x 5 x 5 x 128
-    up1 = UpSampling3D((2, 2, 2))(d_conv1) # 10 x 10 x 10 x 128
+    d_conv1 = Conv3D(256, (3, 3, 3), activation='relu', padding='same')(b_norm5) # 5 x 5 x 5 x 256
+    up1 = UpSampling3D((2, 2, 2))(d_conv1) # 10 x 10 x 10 x 256
     b_norm6 = BatchNormalization()(up1)
 
-    d_conv2 = Conv3D(128, (3, 3, 3), activation='relu', padding='same')(b_norm6) # 10 x 10 x 10 x 64
-    up2 = UpSampling3D((2, 2, 2))(d_conv2) # 20 x 20 x 20 x 64
+    d_conv2 = Conv3D(128, (3, 3, 3), activation='relu', padding='same')(b_norm6) # 10 x 10 x 10 x 128
+    up2 = UpSampling3D((2, 2, 2))(d_conv2) # 20 x 20 x 20 x 128
     b_norm7 = BatchNormalization()(up2)
 
-    d_conv3 = Conv3D(64, (3, 3, 3), activation='relu', padding='same')(b_norm7) # 20 x 20 x 20 x 32
-    up3 = UpSampling3D((2, 2, 2))(d_conv3) # 40 x 40 x 40 x 32
+    d_conv3 = Conv3D(64, (3, 3, 3), activation='relu', padding='same')(b_norm7) # 20 x 20 x 20 x 64
+    up3 = UpSampling3D((2, 2, 2))(d_conv3) # 40 x 40 x 40 x 64
     b_norm8 = BatchNormalization()(up3)
 
-    d_conv4 = Conv3D(32, (3, 3, 3), activation='relu', padding='same')(b_norm8) # 40 x 40 x 40 x 16
+    d_conv4 = Conv3D(32, (3, 3, 3), activation='relu', padding='same')(b_norm8) # 40 x 40 x 40 x 32
     b_norm9 = BatchNormalization()(d_conv4)
 
     d_conv5 = Conv3D(8, (3, 3, 3), activation='relu', padding='same')(b_norm9) # 40 x 40 x 40 x 8
@@ -141,7 +141,9 @@ opt = hvd.DistributedOptimizer(opt)
 classification_model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['categorical_accuracy'])
 
 print(str(time.ctime()) + ": Successfully created Classification Model")
+
 print(str(time.ctime()) + ": Training Classification Model...")
+model_start = time.time()
 
 epochs = 10
 batch_size = 50
@@ -161,6 +163,9 @@ predicted = classification_model.predict(valset)
 predicted = np.argmax(np.round(predicted), axis=1)
 
 print(str(time.ctime()) + ": Finished predictions!")
+model_end = time.time()
+model_diff = round(model_end - model_start, 2)
+print('Total time for training and prediction: ' + str(model_diff) + ' seconds')
 
 print(str(time.ctime()) + ": Evaluating Classification Model...")
 
