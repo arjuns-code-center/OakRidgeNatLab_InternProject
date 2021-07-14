@@ -1,5 +1,6 @@
 import numpy as np
 import cupy as cp
+import pandas as pd
 import time, argparse
 from sklearn.cluster import KMeans as sk_kmeans
 from cuml.cluster import KMeans as cuml_kmeans
@@ -11,9 +12,9 @@ import dask
 import pandas as pd
 
 args = argparse.ArgumentParser()
-args.add_argument('--npartitions', default=6, type=int, help='number of data partitions')
-args.add_argument('--single_gpu', action='store_true', default=False, help='single or multi gpu')
-args.add_argument('--dataset', default='SARSMERSCOV2', type=str, help='type of data loading in')
+args.add_argument('--npartitions', type=int, help='number of data partitions')
+args.add_argument('--single_gpu', type=bool, help='single or multi gpu')
+args.add_argument('--dataset', type=str, help='type of data loading in')
 args = args.parse_args()
 npartitions = args.npartitions
 single_gpu = args.single_gpu
@@ -33,7 +34,7 @@ def rapids_km_single_gpu(train_pca, val_pca, nclusters):
         
 def rapids_km_multiple_gpus(train_pca, val_pca, nclusters):
     cluster = LocalCUDACluster(n_workers=npartitions, threads_per_worker=1)
-    client  = Client(cluster)
+    client  = Client(cluster) # use client scheduler for multi GPU
     
     labels = client.submit(helperMethod, train_pca, val_pca)
     labels = labels.result()
@@ -49,8 +50,8 @@ def convertCPU_GPU(t, v):
     return cudf.from_pandas(pd.DataFrame(t)), cudf.from_pandas(pd.DataFrame(v))
 
 def convertCPU_GPUs(t, v, npartitions):
-    d_tpca = dask_cudf.from_dask_dataframe(dask.dataframe.from_pandas(t, npartitions=npartitions))
-    d_vpca = dask_cudf.from_dask_dataframe(dask.dataframe.from_pandas(v, npartitions=npartitions))
+    d_tpca = dask_cudf.from_cudf(cudf.DataFrame.from_pandas(pd.DataFrame(t)), npartitions=npartitions)
+    d_vpca = dask_cudf.from_cudf(cudf.DataFrame.from_pandas(pd.DataFrame(v)), npartitions=npartitions)
         
     d_tpca = d_tpca.persist()
     d_vpca = d_vpca.persist()
@@ -124,5 +125,5 @@ if datatype == 'SARSMERSCOV2':
 elif datatype == 'HEA':
     npzfile2 = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/pca/hea_sk_clusterfiles.npz')
     reduced_val = npzfile2['redval']
-    np.savez('hea_sk_plotting.npz', reslab=sk_labels_val, lv=label_validation, redval=reduced_val)
+    # np.savez('hea_sk_plotting.npz', reslab=sk_labels_val, lv=label_validation, redval=reduced_val)
     np.savez('hea_r_plotting.npz', reslab=r_labels_val, redval=reduced_val, lv=label_validation)

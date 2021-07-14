@@ -1,19 +1,20 @@
 import numpy as np
 import cupy as cp
+import pandas as pd
 import time, argparse
 from sklearn.preprocessing import normalize
 from sklearn.decomposition import PCA as sk_PCA
 from cuml.decomposition import PCA as cuml_PCA
 from dask_ml.decomposition import PCA as cuml_dask_PCA
-from dask_cuda import LocalCUDACluster
 from dask.distributed import Client
+from dask_cuda import LocalCUDACluster
 import cudf
 import dask, dask_cudf
 
 args = argparse.ArgumentParser()
-args.add_argument('--npartitions', default=6, type=int, help='number of data partitions')
-args.add_argument('--single_gpu', action='store_true', default=False, help='single or multi gpu')
-args.add_argument('--dataset', default='SARSMERSCOV2', type=str, help='type of data loading in')
+args.add_argument('--npartitions', type=int, help='number of data partitions')
+args.add_argument('--single_gpu', type=bool, help='single or multi gpu')
+args.add_argument('--dataset', type=str, help='type of data loading in')
 args = args.parse_args()
 npartitions = args.npartitions
 single_gpu = args.single_gpu
@@ -59,11 +60,11 @@ def rapids_pca(normalized_train_pca, normalized_val_pca, single_gpu):
         cluster = LocalCUDACluster(n_workers=npartitions, threads_per_worker=1)
         client  = Client(cluster)
         
-        p_ntpca = dask.dataframe.from_pandas(t_df, npartitions=npartitions)
-        p_nvpca = dask.dataframe.from_pandas(v_df, npartitions=npartitions)
+        p_ntpca = cudf.DataFrame.from_pandas(pd.DataFrame(normalized_train_pca))
+        p_nvpca = cudf.DataFrame.from_pandas(pd.DataFrame(normalized_val_pca))
         
-        d_ntpca = dask_cudf.from_dask_dataframe(p_ntpca)
-        d_nvpca = dask_cudf.from_dask_dataframe(p_nvpca)
+        d_ntpca = dask_cudf.from_cudf(p_ntpca, npartitions=npartitions)
+        d_nvpca = dask_cudf.from_cudf(p_nvpca, npartitions=npartitions)
         
         d_ntpca = d_ntpca.persist()
         d_nvpca = d_nvpca.persist()
@@ -74,7 +75,7 @@ def rapids_pca(normalized_train_pca, normalized_val_pca, single_gpu):
         
         reduced_train, reduced_val = client.submit(helperMethod, d_ntpca, d_nvpca)
         reduced_train = reduced_train.result()
-        reduced_val = reduced_val.result()
+        reduced_val = reduced_val.result() # use client scheduler to run multi GPU
 
     end = time.time()
     r_diff = round(end - start, 2)

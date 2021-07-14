@@ -3,7 +3,7 @@
 #BSUB -P gen150
 #BSUB -J KMeans
 #BSUB -o smc2_multi_gpu.txt
-#BSUB -W 1:00
+#BSUB -W 0:30
 #BSUB -nnodes 1
 # End LSF directives and begin shell commands
 
@@ -11,50 +11,6 @@
 # module load open-ce
 NODES=$(cat ${LSB_DJOB_HOSTFILE} | sort | uniq | grep -v login | grep -v batch | wc -l)
 
-# jsrun -n${NODES} -a1 -g1 -c42 -r1  --smpiargs "off" python kmeans_init.py --npartitions 1 \
-#                                                                --single_gpu $True \
-#                                                                --dataset $'SARSMERSCOV2'
-
-#jsrun -n${NODES} -a1 -g2 -c42 -r1  --smpiargs "off" python kmeans_init.py --npartitions 2 \
-#                                                                --single_gpu $False \
-#                                                                --dataset $'SARSMERSCOV2'
-                                                                
-#jsrun -n${NODES} -a1 -g3 -c42 -r1  --smpiargs "off" python kmeans_init.py --npartitions 3 \
-#                                                                --single_gpu $False \
-#                                                                --dataset $'SARSMERSCOV2'
-                                                                
-#jsrun -n${NODES} -a1 -g4 -c42 -r1  --smpiargs "off" python kmeans_init.py --npartitions 4 \
-#                                                                --single_gpu $False \
-#                                                                --dataset $'SARSMERSCOV2'
-                                                                
-#jsrun -n${NODES} -a1 -g5 -c42 -r1  --smpiargs "off" python kmeans_init.py --npartitions 5 \
-#                                                                --single_gpu $False \
-#                                                                --dataset $'SARSMERSCOV2'
-                                                                
-#jsrun -n${NODES} -a1 -g6 -c42 -r1  --smpiargs "off" python kmeans_init.py --npartitions 6 \
-#                                                                --single_gpu $False \
-#                                                                --dataset $'SARSMERSCOV2'
-
 jsrun -n${NODES} -a1 -g1 -c42 -r1  --smpiargs "off" python kmeans_init.py --npartitions 1 \
-                                                                --single_gpu $True \
-                                                                --dataset $'HEA'
-                                                                
-jsrun -n${NODES} -a1 -g2 -c42 -r1  --smpiargs "off" python kmeans_init.py --npartitions 2 \
-                                                                --single_gpu $False \
-                                                                --dataset $'HEA'
-                                                                
-jsrun -n${NODES} -a1 -g3 -c42 -r1  --smpiargs "off" python kmeans_init.py --npartitions 3 \
-                                                                --single_gpu $False \
-                                                                --dataset $'HEA'
-                                                                
-jsrun -n${NODES} -a1 -g4 -c42 -r1  --smpiargs "off" python kmeans_init.py --npartitions 4 \
-                                                                --single_gpu $False \
-                                                                --dataset $'HEA'
-                                                                
-jsrun -n${NODES} -a1 -g5 -c42 -r1  --smpiargs "off" python kmeans_init.py --npartitions 5 \
-                                                                --single_gpu $False \
-                                                                --dataset $'HEA'
-                                                                
-jsrun -n${NODES} -a1 -g6 -c42 -r1  --smpiargs "off" python kmeans_init.py --npartitions 6 \
-                                                                --single_gpu $False \
-                                                                --dataset $'HEA'
+                                                                --single_gpu True \
+                                                                --dataset 'SARSMERSCOV2'
