@@ -1,120 +1,69 @@
-6 GPUs:
-Mon Jul 12 11:37:48 2021: Initializing...
-Mon Jul 12 11:37:49 2021: Successfully loaded all data sets!
-Mon Jul 12 11:37:52 2021: Transferring CPU->GPU...
-Mon Jul 12 11:49:40 2021: Successfully transferred!
-Mon Jul 12 11:49:40 2021: Implementing PCA Clustering with Rapids...
+1 GPU:
+Wed Jul 14 15:33:26 2021: Initializing...
+Wed Jul 14 15:33:27 2021: Successfully loaded all data sets!
+Wed Jul 14 15:33:27 2021: Transferring CPU->GPU...
+Wed Jul 14 15:45:24 2021: Successfully transferred!
+Wed Jul 14 15:45:24 2021: Implementing PCA Clustering with Rapids...
 Total explained variance: 49.599893793880334
-Mon Jul 12 11:49:49 2021: Finished PCA Clustering with Rapids in: 8.25 seconds!
-
-------------------------------------------------------------
-Sender: LSF System <lsfadmin@batch5>
-Subject: Job 1147470: <pca> in cluster <summit> Done
-
-Job <pca> was submitted from host <login4> by user <arjun2612> in cluster <summit> at Mon Jul 12 11:37:03 2021
-Job was executed on host(s) <1*batch5>, in queue <batch>, as user <arjun2612> in cluster <summit> at Mon Jul 12 11:37:25 2021
-                            <42*g26n13>
-</ccs/home/arjun2612> was used as the home directory.
-</gpfs/alpine/scratch/arjun2612/gen150/ORNL_Coding/Code/pca> was used as the working directory.
-Started at Mon Jul 12 11:37:25 2021
-Terminated at Mon Jul 12 11:49:52 2021
-Results reported at Mon Jul 12 11:49:52 2021
-
-The output (if any) is above this job summary.
-
-5 GPUs:
-Mon Jul 12 12:38:47 2021: Initializing...
-Mon Jul 12 12:38:47 2021: Successfully loaded all data sets!
-Mon Jul 12 12:38:48 2021: Transferring CPU->GPU...
-Mon Jul 12 12:50:41 2021: Successfully transferred!
-Mon Jul 12 12:50:41 2021: Implementing PCA Clustering with Rapids...
-Total explained variance: 49.599893793880334
-Mon Jul 12 12:50:48 2021: Finished PCA Clustering with Rapids in: 6.91 seconds!
-
-------------------------------------------------------------
-Sender: LSF System <lsfadmin@batch4>
-Subject: Job 1147633: <pca> in cluster <summit> Done
-
-Job <pca> was submitted from host <login4> by user <arjun2612> in cluster <summit> at Mon Jul 12 12:38:05 2021
-Job was executed on host(s) <1*batch4>, in queue <batch>, as user <arjun2612> in cluster <summit> at Mon Jul 12 12:38:20 2021
-                            <42*e08n08>
-</ccs/home/arjun2612> was used as the home directory.
-</gpfs/alpine/scratch/arjun2612/gen150/ORNL_Coding/Code/pca> was used as the working directory.
-Started at Mon Jul 12 12:38:20 2021
-Terminated at Mon Jul 12 12:50:51 2021
-Results reported at Mon Jul 12 12:50:51 2021
-
-The output (if any) is above this job summary.
-
-4 GPUs:
-Mon Jul 12 15:18:51 2021: Initializing...
-Mon Jul 12 15:18:52 2021: Successfully loaded all data sets!
-Mon Jul 12 15:18:53 2021: Transferring CPU->GPU...
-Mon Jul 12 15:30:48 2021: Successfully transferred!
-Mon Jul 12 15:30:48 2021: Implementing PCA Clustering with Rapids...
-Total explained variance: 49.599893793880334
-Mon Jul 12 15:30:55 2021: Finished PCA Clustering with Rapids in: 6.73 seconds!
-
-------------------------------------------------------------
-Sender: LSF System <lsfadmin@batch5>
-Subject: Job 1148199: <pca> in cluster <summit> Done
-
-Job <pca> was submitted from host <login3> by user <arjun2612> in cluster <summit> at Mon Jul 12 15:18:05 2021
-Job was executed on host(s) <1*batch5>, in queue <batch>, as user <arjun2612> in cluster <summit> at Mon Jul 12 15:18:25 2021
-                            <42*h33n09>
-</ccs/home/arjun2612> was used as the home directory.
-</gpfs/alpine/scratch/arjun2612/gen150/ORNL_Coding/Code/pca> was used as the working directory.
-Started at Mon Jul 12 15:18:25 2021
-Terminated at Mon Jul 12 15:30:57 2021
-Results reported at Mon Jul 12 15:30:57 2021
-
-The output (if any) is above this job summary.
-
-3 GPUs:
-Mon Jul 12 15:49:43 2021: Initializing...
-Mon Jul 12 15:49:44 2021: Successfully loaded all data sets!
-Mon Jul 12 15:49:44 2021: Transferring CPU->GPU...
-Mon Jul 12 16:01:35 2021: Successfully transferred!
-Mon Jul 12 16:01:35 2021: Implementing PCA Clustering with Rapids...
-Total explained variance: 49.599893793880334
-Mon Jul 12 16:01:43 2021: Finished PCA Clustering with Rapids in: 7.25 seconds!
-
-------------------------------------------------------------
-Sender: LSF System <lsfadmin@batch5>
-Subject: Job 1148275: <pca> in cluster <summit> Done
-
-Job <pca> was submitted from host <login3> by user <arjun2612> in cluster <summit> at Mon Jul 12 15:48:53 2021
-Job was executed on host(s) <1*batch5>, in queue <batch>, as user <arjun2612> in cluster <summit> at Mon Jul 12 15:49:13 2021
-                            <42*b31n16>
-</ccs/home/arjun2612> was used as the home directory.
-</gpfs/alpine/scratch/arjun2612/gen150/ORNL_Coding/Code/pca> was used as the working directory.
-Started at Mon Jul 12 15:49:13 2021
-Terminated at Mon Jul 12 16:01:45 2021
-Results reported at Mon Jul 12 16:01:45 2021
-
-The output (if any) is above this job summary.
+Wed Jul 14 15:45:31 2021: Finished PCA Clustering with Rapids in: 7.85 seconds!
 
 2 GPUs:
-Mon Jul 12 16:04:35 2021: Initializing...
-Mon Jul 12 16:04:36 2021: Successfully loaded all data sets!
-Mon Jul 12 16:04:36 2021: Transferring CPU->GPU...
-Mon Jul 12 16:16:29 2021: Successfully transferred!
-Mon Jul 12 16:16:29 2021: Implementing PCA Clustering with Rapids...
+Wed Jul 14 15:45:38 2021: Initializing...
+Wed Jul 14 15:45:38 2021: Successfully loaded all data sets!
+Wed Jul 14 15:45:39 2021: Transferring CPU->GPU...
+Wed Jul 14 15:57:29 2021: Successfully transferred!
+Wed Jul 14 15:57:29 2021: Implementing PCA Clustering with Rapids...
 Total explained variance: 49.599893793880334
-Mon Jul 12 16:16:37 2021: Finished PCA Clustering with Rapids in: 8.55 seconds!
+Wed Jul 14 15:57:30 2021: Finished PCA Clustering with Rapids in: 1.35 seconds!
+
+3 GPUs:
+Wed Jul 14 15:57:36 2021: Initializing...
+Wed Jul 14 15:57:36 2021: Successfully loaded all data sets!
+Wed Jul 14 15:57:37 2021: Transferring CPU->GPU...
+Wed Jul 14 16:09:27 2021: Successfully transferred!
+Wed Jul 14 16:09:27 2021: Implementing PCA Clustering with Rapids...
+Total explained variance: 49.599893793880334
+Wed Jul 14 16:09:28 2021: Finished PCA Clustering with Rapids in: 1.35 seconds!
+
+4 GPUs:
+Wed Jul 14 16:09:34 2021: Initializing...
+Wed Jul 14 16:09:34 2021: Successfully loaded all data sets!
+Wed Jul 14 16:09:35 2021: Transferring CPU->GPU...
+Wed Jul 14 16:21:25 2021: Successfully transferred!
+Wed Jul 14 16:21:25 2021: Implementing PCA Clustering with Rapids...
+Total explained variance: 49.599893793880334
+Wed Jul 14 16:21:27 2021: Finished PCA Clustering with Rapids in: 1.39 seconds!
+
+5 GPUs:
+Wed Jul 14 16:21:32 2021: Initializing...
+Wed Jul 14 16:21:33 2021: Successfully loaded all data sets!
+Wed Jul 14 16:21:33 2021: Transferring CPU->GPU...
+Wed Jul 14 16:33:23 2021: Successfully transferred!
+Wed Jul 14 16:33:23 2021: Implementing PCA Clustering with Rapids...
+Total explained variance: 49.599893793880334
+Wed Jul 14 16:33:24 2021: Finished PCA Clustering with Rapids in: 1.41 seconds!
+
+6 GPUs:
+Wed Jul 14 16:33:30 2021: Initializing...
+Wed Jul 14 16:33:31 2021: Successfully loaded all data sets!
+Wed Jul 14 16:33:31 2021: Transferring CPU->GPU...
+Wed Jul 14 16:45:22 2021: Successfully transferred!
+Wed Jul 14 16:45:22 2021: Implementing PCA Clustering with Rapids...
+Total explained variance: 49.599893793880334
+Wed Jul 14 16:45:23 2021: Finished PCA Clustering with Rapids in: 1.37 seconds!
 
 ------------------------------------------------------------
-Sender: LSF System <lsfadmin@batch4>
-Subject: Job 1148309: <pca> in cluster <summit> Done
+Sender: LSF System <lsfadmin@batch2>
+Subject: Job 1156425: <pca> in cluster <summit> Done
 
-Job <pca> was submitted from host <login3> by user <arjun2612> in cluster <summit> at Mon Jul 12 16:03:45 2021
-Job was executed on host(s) <1*batch4>, in queue <batch>, as user <arjun2612> in cluster <summit> at Mon Jul 12 16:04:05 2021
-                            <42*d01n18>
+Job <pca> was submitted from host <login5> by user <arjun2612> in cluster <summit> at Wed Jul 14 15:32:42 2021
+Job was executed on host(s) <1*batch2>, in queue <batch>, as user <arjun2612> in cluster <summit> at Wed Jul 14 15:32:57 2021
+                            <42*f08n02>
 </ccs/home/arjun2612> was used as the home directory.
 </gpfs/alpine/scratch/arjun2612/gen150/ORNL_Coding/Code/pca> was used as the working directory.
-Started at Mon Jul 12 16:04:05 2021
-Terminated at Mon Jul 12 16:16:40 2021
-Results reported at Mon Jul 12 16:16:40 2021
+Started at Wed Jul 14 15:32:57 2021
+Terminated at Wed Jul 14 16:45:26 2021
+Results reported at Wed Jul 14 16:45:26 2021
 
 The output (if any) is above this job summary.
 

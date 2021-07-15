@@ -1,57 +1,46 @@
-1 GPU:
-Tue Jul 13 12:20:21 2021: Transferring CPU->GPU...
-Tue Jul 13 12:32:13 2021: Successfullu transferred!
-Tue Jul 13 12:32:13 2021: Implementing KMeans Clustering with Rapids...
+Thu Jul 15 08:31:01 2021: Transferring CPU->GPU...
+Thu Jul 15 08:42:57 2021: Successfullu transferred!
+Thu Jul 15 08:42:57 2021: Implementing KMeans Clustering with Rapids...
 Accuracy: 16.439999999999998
-Tue Jul 13 12:32:15 2021: Finished KMeans Clustering with Rapids in: 2.27 seconds!
-
-2 GPUs:
-Tue Jul 13 12:32:20 2021: Transferring CPU->GPU...
-Tue Jul 13 12:44:12 2021: Successfullu transferred!
-Tue Jul 13 12:44:12 2021: Implementing KMeans Clustering with Rapids...
+Thu Jul 15 08:42:59 2021: Finished KMeans Clustering with Rapids in: 2.05 seconds!
+Thu Jul 15 08:43:05 2021: Transferring CPU->GPU...
+Thu Jul 15 08:54:53 2021: Successfullu transferred!
+Thu Jul 15 08:54:53 2021: Implementing KMeans Clustering with Rapids...
 Accuracy: 16.439999999999998
-Tue Jul 13 12:44:12 2021: Finished KMeans Clustering with Rapids in: 0.39 seconds!
-
-3 GPUs:
-Tue Jul 13 12:44:17 2021: Transferring CPU->GPU...
-Tue Jul 13 12:56:09 2021: Successfullu transferred!
-Tue Jul 13 12:56:09 2021: Implementing KMeans Clustering with Rapids...
+Thu Jul 15 08:54:54 2021: Finished KMeans Clustering with Rapids in: 0.79 seconds!
+Thu Jul 15 08:56:29 2021: Transferring CPU->GPU...
+Thu Jul 15 09:08:19 2021: Successfullu transferred!
+Thu Jul 15 09:08:19 2021: Implementing KMeans Clustering with Rapids...
 Accuracy: 16.439999999999998
-Tue Jul 13 12:56:09 2021: Finished KMeans Clustering with Rapids in: 0.36 seconds!
-
-4 GPUs:
-Tue Jul 13 12:56:15 2021: Transferring CPU->GPU...
-Tue Jul 13 13:08:06 2021: Successfullu transferred!
-Tue Jul 13 13:08:06 2021: Implementing KMeans Clustering with Rapids...
+Thu Jul 15 09:08:19 2021: Finished KMeans Clustering with Rapids in: 0.36 seconds!
+Thu Jul 15 09:08:24 2021: Transferring CPU->GPU...
+Thu Jul 15 09:20:14 2021: Successfullu transferred!
+Thu Jul 15 09:20:14 2021: Implementing KMeans Clustering with Rapids...
 Accuracy: 16.439999999999998
-Tue Jul 13 13:08:06 2021: Finished KMeans Clustering with Rapids in: 0.37 seconds!
-
-5 GPUs:
-Tue Jul 13 13:08:12 2021: Transferring CPU->GPU...
-Tue Jul 13 13:20:03 2021: Successfullu transferred!
-Tue Jul 13 13:20:03 2021: Implementing KMeans Clustering with Rapids...
+Thu Jul 15 09:20:14 2021: Finished KMeans Clustering with Rapids in: 0.36 seconds!
+Thu Jul 15 09:20:19 2021: Transferring CPU->GPU...
+Thu Jul 15 09:32:08 2021: Successfullu transferred!
+Thu Jul 15 09:32:08 2021: Implementing KMeans Clustering with Rapids...
 Accuracy: 16.439999999999998
-Tue Jul 13 13:20:04 2021: Finished KMeans Clustering with Rapids in: 0.38 seconds!
-
-6 GPUs:
-Tue Jul 13 13:20:04 2021: Transferring CPU->GPU...
-Tue Jul 13 13:32:03 2021: Successfullu transferred!
-Tue Jul 13 13:32:03 2021: Implementing KMeans Clustering with Rapids...
+Thu Jul 15 09:32:09 2021: Finished KMeans Clustering with Rapids in: 0.4 seconds!
+Thu Jul 15 09:32:14 2021: Transferring CPU->GPU...
+Thu Jul 15 09:44:05 2021: Successfullu transferred!
+Thu Jul 15 09:44:05 2021: Implementing KMeans Clustering with Rapids...
 Accuracy: 16.439999999999998
-Tue Jul 13 13:32:04 2021: Finished KMeans Clustering with Rapids in: 0.38 seconds!
+Thu Jul 15 09:44:05 2021: Finished KMeans Clustering with Rapids in: 0.75 seconds!
 
 ------------------------------------------------------------
-Sender: LSF System <lsfadmin@batch4>
-Subject: Job 1150915: <KMeans> in cluster <summit> Done
+Sender: LSF System <lsfadmin@batch3>
+Subject: Job 1158428: <KMeans> in cluster <summit> Done
 
-Job <KMeans> was submitted from host <login2> by user <arjun2612> in cluster <summit> at Tue Jul 13 12:19:26 2021
-Job was executed on host(s) <1*batch4>, in queue <batch>, as user <arjun2612> in cluster <summit> at Tue Jul 13 12:19:50 2021
-                            <42*h16n16>
+Job <KMeans> was submitted from host <login1> by user <arjun2612> in cluster <summit> at Thu Jul 15 08:26:19 2021
+Job was executed on host(s) <1*batch3>, in queue <batch>, as user <arjun2612> in cluster <summit> at Thu Jul 15 08:26:48 2021
+                            <42*a28n03>
 </ccs/home/arjun2612> was used as the home directory.
-</gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/kmeans> was used as the working directory.
-Started at Tue Jul 13 12:19:50 2021
-Terminated at Tue Jul 13 13:20:06 2021
-Results reported at Tue Jul 13 13:20:06 2021
+</gpfs/alpine/scratch/arjun2612/gen150/ORNL_Coding/Code/kmeans> was used as the working directory.
+Started at Thu Jul 15 08:26:48 2021
+Terminated at Thu Jul 15 09:44:07 2021
+Results reported at Thu Jul 15 09:44:07 2021
 
 The output (if any) is above this job summary.
 
