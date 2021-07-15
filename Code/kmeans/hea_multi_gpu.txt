@@ -1,28 +1,39 @@
+1 GPU:
 Thu Jul 15 08:31:01 2021: Transferring CPU->GPU...
 Thu Jul 15 08:42:57 2021: Successfullu transferred!
 Thu Jul 15 08:42:57 2021: Implementing KMeans Clustering with Rapids...
 Accuracy: 16.439999999999998
 Thu Jul 15 08:42:59 2021: Finished KMeans Clustering with Rapids in: 2.05 seconds!
+
+2 GPUs:
 Thu Jul 15 08:43:05 2021: Transferring CPU->GPU...
 Thu Jul 15 08:54:53 2021: Successfullu transferred!
 Thu Jul 15 08:54:53 2021: Implementing KMeans Clustering with Rapids...
 Accuracy: 16.439999999999998
 Thu Jul 15 08:54:54 2021: Finished KMeans Clustering with Rapids in: 0.79 seconds!
+
+3 GPUs:
 Thu Jul 15 08:56:29 2021: Transferring CPU->GPU...
 Thu Jul 15 09:08:19 2021: Successfullu transferred!
 Thu Jul 15 09:08:19 2021: Implementing KMeans Clustering with Rapids...
 Accuracy: 16.439999999999998
 Thu Jul 15 09:08:19 2021: Finished KMeans Clustering with Rapids in: 0.36 seconds!
+
+4 GPUs:
 Thu Jul 15 09:08:24 2021: Transferring CPU->GPU...
 Thu Jul 15 09:20:14 2021: Successfullu transferred!
 Thu Jul 15 09:20:14 2021: Implementing KMeans Clustering with Rapids...
 Accuracy: 16.439999999999998
 Thu Jul 15 09:20:14 2021: Finished KMeans Clustering with Rapids in: 0.36 seconds!
+
+5 GPUs:
 Thu Jul 15 09:20:19 2021: Transferring CPU->GPU...
 Thu Jul 15 09:32:08 2021: Successfullu transferred!
 Thu Jul 15 09:32:08 2021: Implementing KMeans Clustering with Rapids...
 Accuracy: 16.439999999999998
 Thu Jul 15 09:32:09 2021: Finished KMeans Clustering with Rapids in: 0.4 seconds!
+
+6 GPUs:
 Thu Jul 15 09:32:14 2021: Transferring CPU->GPU...
 Thu Jul 15 09:44:05 2021: Successfullu transferred!
 Thu Jul 15 09:44:05 2021: Implementing KMeans Clustering with Rapids...
