@@ -2,25 +2,21 @@
 # Begin LSF directives
 #BSUB -P gen150
 #BSUB -J CAE
-#BSUB -o hea_multi_gpu.txt
-#BSUB -W 2:00
+#BSUB -o smc2_multi_gpu_2.txt
+#BSUB -W 1:00
 #BSUB -nnodes 1
 # End LSF directives and begin shell commands
 
-# source summit_env.sh
 module load open-ce
-NODES=$(cat ${LSB_DJOB_HOSTFILE} | sort | uniq | grep -v login | grep -v batch | wc -l)
 
-#jsrun -n${NODES} -a1 -g1 -c42 -r1 python cae_init.py --dataset 'SARSMERSCOV2'
-#jsrun -n${NODES} -a1 -g2 -c42 -r1 python cae_init.py --dataset 'SARSMERSCOV2'
-#jsrun -n${NODES} -a1 -g3 -c42 -r1 python cae_init.py --dataset 'SARSMERSCOV2'
-#jsrun -n${NODES} -a1 -g4 -c42 -r1 python cae_init.py --dataset 'SARSMERSCOV2'
-#jsrun -n${NODES} -a1 -g5 -c42 -r1 python cae_init.py --dataset 'SARSMERSCOV2'
-#jsrun -n${NODES} -a1 -g6 -c42 -r1 python cae_init.py --dataset 'SARSMERSCOV2'
+jsrun -n1 -a1 -g1 -c42 -r1 python cae_init.py --dataset 'SARSMERSCOV2'
 
-jsrun -n${NODES} -a1 -g1 -c42 -r1 python cae_init.py --dataset 'HEA'
-jsrun -n${NODES} -a1 -g2 -c42 -r1 python cae_init.py --dataset 'HEA'
-jsrun -n${NODES} -a1 -g3 -c42 -r1 python cae_init.py --dataset 'HEA'
-jsrun -n${NODES} -a1 -g4 -c42 -r1 python cae_init.py --dataset 'HEA'
-jsrun -n${NODES} -a1 -g5 -c42 -r1 python cae_init.py --dataset 'HEA'
-jsrun -n${NODES} -a1 -g6 -c42 -r1 python cae_init.py --dataset 'HEA'
+jsrun -n1 -a1 -g2 -c42 -r1 python cae_init.py --dataset 'SARSMERSCOV2'
+
+jsrun -n1 -a1 -g3 -c42 -r1 python cae_init.py --dataset 'SARSMERSCOV2'
+
+#jsrun -n1 -a1 -g4 -c42 -r1 python cae_init.py --dataset 'SARSMERSCOV2'
+
+#jsrun -n1 -a1 -g5 -c42 -r1 python cae_init.py --dataset 'SARSMERSCOV2'
+
+#jsrun -n1 -a1 -g6 -c42 -r1 python cae_init.py --dataset 'SARSMERSCOV2'

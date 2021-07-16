@@ -13,11 +13,9 @@ import dask, dask_cudf
 
 args = argparse.ArgumentParser()
 args.add_argument('--npartitions', type=int, help='number of data partitions')
-args.add_argument('--single_gpu', type=bool, help='single or multi gpu')
 args.add_argument('--dataset', type=str, help='type of data loading in')
 args = args.parse_args()
 npartitions = args.npartitions
-single_gpu = args.single_gpu
 datatype = args.dataset
 
 def sklearn_pca(normalized_train_pca, normalized_val_pca):
@@ -37,59 +35,44 @@ def sklearn_pca(normalized_train_pca, normalized_val_pca):
     print(str(time.ctime()) + ": Finished PCA Clustering with Sklearn in: " + str(sk_diff) + " seconds!")
     return reduced_train, reduced_val
     
-def rapids_pca(normalized_train_pca, normalized_val_pca, single_gpu):    
+def rapids_pca(normalized_train_pca, normalized_val_pca):
     reduced_train = np.array([])
     reduced_val = np.array([])
+    
+    print(str(time.ctime()) + ": Transferring CPU->GPUs...")
+    cluster = LocalCUDACluster(n_workers=npartitions, threads_per_worker=4)
+    client  = Client(cluster)
         
-    if single_gpu:
-        print(str(time.ctime()) + ": Transferring CPU->GPU...")
-        c_ntpca = cp.array(normalized_train_pca)
-        c_nvpca = cp.array(normalized_val_pca)
-        print(str(time.ctime()) + ": Successfully transferred!")
-        print(str(time.ctime()) + ": Implementing PCA Clustering with Rapids...")
+    p_ntpca = cudf.DataFrame.from_pandas(pd.DataFrame(normalized_train_pca))
+    p_nvpca = cudf.DataFrame.from_pandas(pd.DataFrame(normalized_val_pca))
         
-        start = time.time()
+    d_ntpca = dask_cudf.from_cudf(p_ntpca, npartitions=npartitions)
+    d_nvpca = dask_cudf.from_cudf(p_nvpca, npartitions=npartitions)
         
-        pca = cuml_PCA(n_components=2)  # 2 PCs
-        pca.fit(c_ntpca)
-        reduced_train = pca.transform(c_ntpca)
-        reduced_val = pca.transform(c_nvpca) # reduce dimensions of both sets
-        print('Total explained variance: {}'.format(pca.explained_variance_ratio_.sum() * 100))
-    else:
-        print(str(time.ctime()) + ": Transferring CPU->GPUs...")
-        cluster = LocalCUDACluster(n_workers=npartitions, threads_per_worker=1)
-        client  = Client(cluster)
-        
-        p_ntpca = cudf.DataFrame.from_pandas(pd.DataFrame(normalized_train_pca))
-        p_nvpca = cudf.DataFrame.from_pandas(pd.DataFrame(normalized_val_pca))
-        
-        d_ntpca = dask_cudf.from_cudf(p_ntpca, npartitions=npartitions)
-        d_nvpca = dask_cudf.from_cudf(p_nvpca, npartitions=npartitions)
-        
-        d_ntpca = d_ntpca.persist()
-        d_nvpca = d_nvpca.persist()
-        print(str(time.ctime()) + ": Successfully transferred!")
-        print(str(time.ctime()) + ": Implementing PCA Clustering with Rapids...")
-        
-        start = time.time()
-        
-        reduced_train, reduced_val = client.submit(helperMethod, d_ntpca, d_nvpca)
-        reduced_train = reduced_train.result()
-        reduced_val = reduced_val.result() # use client scheduler to run multi GPU
-
-    end = time.time()
-    r_diff = round(end - start, 2)
-
-    print(str(time.ctime()) + ": Finished PCA Clustering with Rapids in: " + str(r_diff) + " seconds!")
-    return reduced_train, reduced_val
-
-def helperMethod(dt, dv):
+#   d_ntpca = d_ntpca.persist()
+#   d_nvpca = d_nvpca.persist()
+    print(str(time.ctime()) + ": Successfully transferred!")
+    
+    print(str(time.ctime()) + ": Implementing PCA Clustering with Rapids...")
     pca = cuml_dask_PCA(n_components=2)  # 2 PCs
-    pca.fit(dt)
-    rtrain = cp.array(pca.transform(dt))
-    rval = cp.array(pca.transform(dv)) # reduce dimensions of both sets
+    runtimes = np.array([])
+    
+    for i in range(10):
+        start = time.time()
+        pca.fit(d_ntpca)
+        reduced_train = cp.array(pca.transform(d_ntpca))
+        reduced_val = cp.array(pca.transform(d_nvpca)) # reduce dimensions of both sets
+        end = time.time()
+        r_diff = end - start
+        
+        runtimes = np.append(runtimes, r_diff)
+    
+    avg_runtime = round(sum(runtimes[3:]) / len(runtimes[3:]), 2)
+    
+    print(str(time.ctime()) + ": Finished PCA Clustering with Rapids in: " + str(avg_runtime) + " seconds!")
     print('Total explained variance: {}'.format(pca.explained_variance_ratio_.sum() * 100))
-    return rtrain, rval
+
+    return reduced_train, reduced_val
     
 print(str(time.ctime()) + ": Initializing...")
 train_pca = None
@@ -116,7 +99,7 @@ normalized_train_pca = normalize(train_pca, axis=1, norm='l1')
 normalized_val_pca = normalize(val_pca, axis=1, norm='l1')
 
 # sk_rt, sk_rv = sklearn_pca(normalized_train_pca, normalized_val_pca)
-r_rt, r_rv = rapids_pca(normalized_train_pca, normalized_val_pca, single_gpu)
+r_rt, r_rv = rapids_pca(normalized_train_pca, normalized_val_pca)
 
 if datatype == 'SARSMERSCOV2':
     # np.savez('smc2_sk_clusterfiles.npz', redtrain=sk_rt, redval=sk_rv)

@@ -17,8 +17,7 @@ hvd.init()
 gpus = tf.config.experimental.list_physical_devices('GPU')
 for gpu in gpus:
     tf.config.experimental.set_memory_growth(gpu, True)
-if gpus:
-    tf.config.experimental.set_visible_devices(gpus[hvd.local_rank()], 'GPU')
+tf.config.experimental.set_visible_devices(gpus[hvd.local_rank()], 'GPU')
 
 def smc2_model():
     x = Input(shape=(24, 24, 1))  # 24 x 24 x 1
@@ -124,12 +123,15 @@ print(str(time.ctime()) + ": Creating Classification Model...")
 
 npzfile = None
 classification_model = None
+batch_step = 0
 if datatype == 'SARSMERSCOV2':
     npzfile = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/sars_mers_cov2_dataset/smc2_dataset.npz')
     classification_model = smc2_model()
+    batch_step = 1200 / len(gpus)
 else:
     npzfile = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/hea_dataset/hea_dataset.npz')
     classification_model = hea_model()
+    batch_step = 200 / len(gpus)
 trainset = npzfile['train4D']
 valset = npzfile['val4D']
 lt_onehot = npzfile['ltoh']
@@ -146,14 +148,13 @@ print(str(time.ctime()) + ": Training Classification Model...")
 model_start = time.time()
 
 epochs = 10
-batch_size = 50
 # early_stop = EarlyStopping(monitor='categorical_accuracy', patience=5, restore_best_weights=True)
 callbacks = [hvd.callbacks.BroadcastGlobalVariablesCallback(0)]
 
 # if hvd.rank() == 0:
 #     callbacks.append(tf.keras.callbacks.ModelCheckpoint('./best_checkpoint-{epoch}.h5', monitor='val_categorical_accuracy', mode='max', save_best_only=True))
 
-classify_labels = classification_model.fit(trainset, lt_onehot, batch_size=batch_size, epochs=epochs, verbose=0, callbacks=callbacks)
+classify_labels = classification_model.fit(trainset, lt_onehot, epochs=epochs, steps_per_epoch=batch_step, verbose=0, callbacks=callbacks)
 
 print(str(time.ctime()) + ": Finished training!")
 
