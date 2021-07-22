@@ -4,17 +4,17 @@ import pandas as pd
 import time, argparse
 from sklearn.preprocessing import normalize
 from sklearn.decomposition import PCA as sk_PCA
-from cuml.decomposition import PCA as cuml_PCA
-from dask_ml.decomposition import PCA as cuml_dask_PCA
-from dask.distributed import Client
+from cuml.dask.decomposition import PCA as cuml_PCA
+from dask.distributed import Client, LocalCluster
 from dask_cuda import LocalCUDACluster
-import cudf
-import dask, dask_cudf
+import cudf, dask, dask_cudf
 
 args = argparse.ArgumentParser()
+args.add_argument('--schedulerfile', type=str, help='scheduler file for client')
 args.add_argument('--npartitions', type=int, help='number of data partitions')
 args.add_argument('--dataset', type=str, help='type of data loading in')
 args = args.parse_args()
+sfile = args.schedulerfile
 npartitions = args.npartitions
 datatype = args.dataset
 
@@ -35,31 +35,24 @@ def sklearn_pca(normalized_train_pca, normalized_val_pca):
     print(str(time.ctime()) + ": Finished PCA Clustering with Sklearn in: " + str(sk_diff) + " seconds!")
     return reduced_train, reduced_val
     
-def rapids_pca(normalized_train_pca, normalized_val_pca):
+def rapids_pca(normalized_train_pca, normalized_val_pca, parts, c):
     reduced_train = np.array([])
     reduced_val = np.array([])
     
-    print(str(time.ctime()) + ": Transferring CPU->GPUs...")
-    cluster = LocalCUDACluster(n_workers=npartitions, threads_per_worker=4)
-    client  = Client(cluster)
-        
-    p_ntpca = cudf.DataFrame.from_pandas(pd.DataFrame(normalized_train_pca))
-    p_nvpca = cudf.DataFrame.from_pandas(pd.DataFrame(normalized_val_pca))
-        
-    d_ntpca = dask_cudf.from_cudf(p_ntpca, npartitions=npartitions)
-    d_nvpca = dask_cudf.from_cudf(p_nvpca, npartitions=npartitions)
-        
-#   d_ntpca = d_ntpca.persist()
-#   d_nvpca = d_nvpca.persist()
+    print(str(time.ctime()) + ": Transferring CPU->GPUs...")        
+
+    d_ntpca = dask_cudf.from_cudf(cudf.DataFrame(normalized_train_pca), npartitions=parts).persist()
+    d_nvpca = dask_cudf.from_cudf(cudf.DataFrame(normalized_val_pca), npartitions=parts).persist()
+    
     print(str(time.ctime()) + ": Successfully transferred!")
     
     print(str(time.ctime()) + ": Implementing PCA Clustering with Rapids...")
-    pca = cuml_dask_PCA(n_components=2)  # 2 PCs
+    pca = cuml_PCA(n_components=2, client=c)  # 2 PCs
+    pca.fit(d_ntpca)
     runtimes = np.array([])
     
     for i in range(10):
         start = time.time()
-        pca.fit(d_ntpca)
         reduced_train = cp.array(pca.transform(d_ntpca))
         reduced_val = cp.array(pca.transform(d_nvpca)) # reduce dimensions of both sets
         end = time.time()
@@ -74,36 +67,45 @@ def rapids_pca(normalized_train_pca, normalized_val_pca):
 
     return reduced_train, reduced_val
     
-print(str(time.ctime()) + ": Initializing...")
-train_pca = None
-val_pca = None
-
-if datatype == 'SARSMERSCOV2':
-    training = np.array([])
-    validation = np.array([])
+if __name__ == '__main__':
+    print("Initializing Client...")
+    client  = Client(scheduler_file=sfile)
+    client.wait_for_workers(n_workers=npartitions)
+    print("Successfully Initialized Cluster and Client!")
     
-    npzfile = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/sars_mers_cov2_dataset/smc2_dataset.npz')
-    training = npzfile['train3D']
-    validation = npzfile['val3D']
-    
-    train_pca = np.reshape(training, (training.shape[0], -1))  # 60000 x 576
-    val_pca = np.reshape(validation, (validation.shape[0], -1))  # 15000 x 576
-elif datatype == 'HEA':
-    npzfile = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/hea_dataset/hea_dataset.npz')
-    train_pca = npzfile['train']
-    val_pca = npzfile['val']
+    print(str(time.ctime()) + ": Initializing...")
+    train_pca = None
+    val_pca = None
 
-print(str(time.ctime()) + ": Successfully loaded all data sets!")
+    if datatype == 'SARSMERSCOV2':
+        training = np.array([])
+        validation = np.array([])
 
-normalized_train_pca = normalize(train_pca, axis=1, norm='l1')
-normalized_val_pca = normalize(val_pca, axis=1, norm='l1')
+        npzfile = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/sars_mers_cov2_dataset/smc2_dataset.npz')
+        training = npzfile['train3D']
+        validation = npzfile['val3D']
 
-# sk_rt, sk_rv = sklearn_pca(normalized_train_pca, normalized_val_pca)
-r_rt, r_rv = rapids_pca(normalized_train_pca, normalized_val_pca)
+        train_pca = np.reshape(training, (training.shape[0], -1))  # 60000 x 576
+        val_pca = np.reshape(validation, (validation.shape[0], -1))  # 15000 x 576
+    elif datatype == 'HEA':
+        npzfile = np.load('/gpfs/alpine/gen150/scratch/arjun2612/ORNL_Coding/Code/hea_dataset/hea_dataset.npz')
+        train_pca = npzfile['train']
+        val_pca = npzfile['val']
 
-if datatype == 'SARSMERSCOV2':
-    # np.savez('smc2_sk_clusterfiles.npz', redtrain=sk_rt, redval=sk_rv)
-    cp.savez('smc2_r_clusterfiles.npz', redtrain=r_rt, redval=r_rv)
-elif datatype == 'HEA':
-    # np.savez('hea_sk_clusterfiles.npz', redtrain=sk_rt, redval=sk_rv)
-    cp.savez('hea_r_clusterfiles.npz', redtrain=r_rt, redval=r_rv)
+    print(str(time.ctime()) + ": Successfully loaded all data sets!")
+
+    normalized_train_pca = normalize(train_pca, axis=1, norm='l1')
+    normalized_val_pca = normalize(val_pca, axis=1, norm='l1')
+
+    # sk_rt, sk_rv = sklearn_pca(normalized_train_pca, normalized_val_pca)
+    r_rt, r_rv = rapids_pca(cp.array(normalized_train_pca), cp.array(normalized_val_pca), npartitions, client)
+
+    if datatype == 'SARSMERSCOV2':
+        # np.savez('smc2_sk_clusterfiles.npz', redtrain=sk_rt, redval=sk_rv)
+        cp.savez('smc2_r_clusterfiles.npz', redtrain=r_rt, redval=r_rv)
+    elif datatype == 'HEA':
+        # np.savez('hea_sk_clusterfiles.npz', redtrain=sk_rt, redval=sk_rv)
+        cp.savez('hea_r_clusterfiles.npz', redtrain=r_rt, redval=r_rv)
+        
+    client.retire_workers(list(client.scheduler_info()['workers']), close_workers=True)
+    client.shutdown()

@@ -1,69 +1,219 @@
-1 GPU:
-Wed Jul 14 15:33:26 2021: Initializing...
-Wed Jul 14 15:33:27 2021: Successfully loaded all data sets!
-Wed Jul 14 15:33:27 2021: Transferring CPU->GPU...
-Wed Jul 14 15:45:24 2021: Successfully transferred!
-Wed Jul 14 15:45:24 2021: Implementing PCA Clustering with Rapids...
-Total explained variance: 49.599893793880334
-Wed Jul 14 15:45:31 2021: Finished PCA Clustering with Rapids in: 7.85 seconds!
+Running scheduler
+distributed.scheduler - INFO - -----------------------------------------------
+distributed.scheduler - INFO - -----------------------------------------------
+distributed.scheduler - INFO - Clear task state
+distributed.scheduler - INFO -   Scheduler at:     tcp://10.41.1.24:8786
+distributed.scheduler - INFO -   dashboard at:           10.41.1.24:8787
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.41.1.24:39203'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.41.1.24:46365'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.41.1.24:40889'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.41.1.24:34153'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.41.1.24:45811'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.41.1.24:34033'
+distributed.preloading - INFO - Import preload module: dask_cuda.initialize
+distributed.preloading - INFO - Import preload module: dask_cuda.initialize
+distributed.preloading - INFO - Import preload module: dask_cuda.initialize
+distributed.preloading - INFO - Import preload module: dask_cuda.initialize
+distributed.preloading - INFO - Import preload module: dask_cuda.initialize
+distributed.preloading - INFO - Import preload module: dask_cuda.initialize
+distributed.worker - INFO -       Start worker at:     tcp://10.41.1.24:43699
+distributed.worker - INFO -          Listening to:     tcp://10.41.1.24:43699
+distributed.worker - INFO -          dashboard at:           10.41.1.24:35589
+distributed.worker - INFO - Waiting to connect to:      tcp://10.41.1.24:8786
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          1
+distributed.worker - INFO -                Memory:                   82.00 GB
+distributed.worker - INFO -       Local Directory: /mnt/bb/arjun2612/dask-worker-space/worker-autzrsb0
+distributed.worker - INFO - Starting Worker plugin <dask_cuda.utils.RMMSetup object at 0x20003c6cf790-86e133b6-187c-4dd5-a9d8-b99731ae0241
+distributed.worker - INFO -       Start worker at:     tcp://10.41.1.24:37509
+distributed.worker - INFO -          Listening to:     tcp://10.41.1.24:37509
+distributed.worker - INFO -          dashboard at:           10.41.1.24:40851
+distributed.worker - INFO - Waiting to connect to:      tcp://10.41.1.24:8786
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          1
+distributed.worker - INFO -                Memory:                   82.00 GB
+distributed.worker - INFO -       Local Directory: /mnt/bb/arjun2612/dask-worker-space/worker-q11vxn0u
+distributed.worker - INFO - Starting Worker plugin <dask_cuda.utils.CPUAffinity object at 0x20003c6cf-2aa48f3a-b67c-460b-8ef4-c717e9d7ef72
+distributed.worker - INFO - Starting Worker plugin <dask_cuda.utils.RMMSetup object at 0x20003c6cf850-5e61c048-d414-4afe-8555-91c8bcd108cc
+distributed.worker - INFO - Starting Worker plugin <dask_cuda.utils.CPUAffinity object at 0x20003c6cf-18c9e0de-8627-4ecd-8b40-790236a2dbb6
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.scheduler - INFO - Register worker <Worker 'tcp://10.41.1.24:43699', name: tcp://10.41.1.24:43699, memory: 0, processing: 0>
+distributed.scheduler - INFO - Starting worker compute stream, tcp://10.41.1.24:43699
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:      tcp://10.41.1.24:8786
+distributed.worker - INFO - -------------------------------------------------
+distributed.scheduler - INFO - Register worker <Worker 'tcp://10.41.1.24:37509', name: tcp://10.41.1.24:37509, memory: 0, processing: 0>
+distributed.core - INFO - Starting established connection
+distributed.scheduler - INFO - Starting worker compute stream, tcp://10.41.1.24:37509
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:      tcp://10.41.1.24:8786
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -       Start worker at:     tcp://10.41.1.24:46343
+distributed.worker - INFO -          Listening to:     tcp://10.41.1.24:46343
+distributed.worker - INFO -          dashboard at:           10.41.1.24:41055
+distributed.worker - INFO - Waiting to connect to:      tcp://10.41.1.24:8786
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          1
+distributed.worker - INFO -                Memory:                   82.00 GB
+distributed.worker - INFO -       Local Directory: /mnt/bb/arjun2612/dask-worker-space/worker-2sfml1ni
+distributed.worker - INFO - Starting Worker plugin <dask_cuda.utils.RMMSetup object at 0x200075ecdf90-95bae36a-e2cf-43a6-ab41-59b38d53570a
+distributed.worker - INFO -       Start worker at:     tcp://10.41.1.24:46509
+distributed.worker - INFO -          Listening to:     tcp://10.41.1.24:46509
+distributed.worker - INFO -          dashboard at:           10.41.1.24:33839
+distributed.worker - INFO - Waiting to connect to:      tcp://10.41.1.24:8786
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          1
+distributed.worker - INFO -                Memory:                   82.00 GB
+distributed.worker - INFO -       Local Directory: /mnt/bb/arjun2612/dask-worker-space/worker-f3qkhrgu
+distributed.worker - INFO - Starting Worker plugin <dask_cuda.utils.CPUAffinity object at 0x20003c6d0-3e8a59c9-be66-4f3e-8be7-d9dcd7438d0d
+distributed.worker - INFO - Starting Worker plugin <dask_cuda.utils.RMMSetup object at 0x20003c6d0750-b0b92704-9271-4d06-9d1f-ce578798dab0
+distributed.worker - INFO -       Start worker at:     tcp://10.41.1.24:33327
+distributed.worker - INFO -          Listening to:     tcp://10.41.1.24:33327
+distributed.worker - INFO -          dashboard at:           10.41.1.24:41609
+distributed.worker - INFO - Waiting to connect to:      tcp://10.41.1.24:8786
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          1
+distributed.worker - INFO -                Memory:                   82.00 GB
+distributed.worker - INFO -       Local Directory: /mnt/bb/arjun2612/dask-worker-space/worker-z4ayyo1x
+distributed.worker - INFO - Starting Worker plugin <dask_cuda.utils.RMMSetup object at 0x20003c6d0690-60b9ed15-52e8-4162-abfd-bfb7b7473d54
+distributed.worker - INFO -       Start worker at:     tcp://10.41.1.24:33813
+distributed.worker - INFO -          Listening to:     tcp://10.41.1.24:33813
+distributed.worker - INFO -          dashboard at:           10.41.1.24:37639
+distributed.worker - INFO - Waiting to connect to:      tcp://10.41.1.24:8786
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          1
+distributed.worker - INFO -                Memory:                   82.00 GB
+distributed.worker - INFO -       Local Directory: /mnt/bb/arjun2612/dask-worker-space/worker-yahggwxk
+distributed.worker - INFO - Starting Worker plugin <dask_cuda.utils.CPUAffinity object at 0x20003c6cd-5a03182b-bfa4-41ba-b7d7-a5fd3e07a649
+distributed.worker - INFO - Starting Worker plugin <dask_cuda.utils.RMMSetup object at 0x20003c6cda50-23b9f41e-c7a6-4b85-8df4-57e63f39cb0a
+distributed.worker - INFO - Starting Worker plugin <dask_cuda.utils.CPUAffinity object at 0x20003c6cf-875de427-83a7-43d4-86fe-bd5bed47fd0e
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - Starting Worker plugin <dask_cuda.utils.CPUAffinity object at 0x20003c6d0-1d7a5a9d-29f6-4af9-8452-aec9cdae6bc0
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.scheduler - INFO - Register worker <Worker 'tcp://10.41.1.24:46343', name: tcp://10.41.1.24:46343, memory: 0, processing: 0>
+distributed.scheduler - INFO - Starting worker compute stream, tcp://10.41.1.24:46343
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:      tcp://10.41.1.24:8786
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.scheduler - INFO - Register worker <Worker 'tcp://10.41.1.24:33813', name: tcp://10.41.1.24:33813, memory: 0, processing: 0>
+distributed.scheduler - INFO - Starting worker compute stream, tcp://10.41.1.24:33813
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:      tcp://10.41.1.24:8786
+distributed.worker - INFO - -------------------------------------------------
+distributed.scheduler - INFO - Register worker <Worker 'tcp://10.41.1.24:33327', name: tcp://10.41.1.24:33327, memory: 0, processing: 0>
+distributed.core - INFO - Starting established connection
+distributed.scheduler - INFO - Starting worker compute stream, tcp://10.41.1.24:33327
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:      tcp://10.41.1.24:8786
+distributed.worker - INFO - -------------------------------------------------
+distributed.scheduler - INFO - Register worker <Worker 'tcp://10.41.1.24:46509', name: tcp://10.41.1.24:46509, memory: 0, processing: 0>
+distributed.core - INFO - Starting established connection
+distributed.scheduler - INFO - Starting worker compute stream, tcp://10.41.1.24:46509
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:      tcp://10.41.1.24:8786
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+Initializing Client...
+distributed.scheduler - INFO - Receive client connection: Client-5312ece2-eb17-11eb-a198-70e28414420d
+distributed.core - INFO - Starting established connection
+Successfully Initialized Cluster and Client!
+Thu Jul 22 14:04:57 2021: Initializing...
+Thu Jul 22 14:04:58 2021: Successfully loaded all data sets!
+Thu Jul 22 14:05:02 2021: Transferring CPU->GPUs...
+Thu Jul 22 14:05:03 2021: Successfully transferred!
+Thu Jul 22 14:05:03 2021: Implementing PCA Clustering with Rapids...
+/sw/summit/ums/gen119/nvrapids_0.18_gcc_7.4.0/lib/python3.7/site-packages/cudf/utils/gpu_utils.py:156: UserWarning: No NVIDIA GPU detected
+  warnings.warn("No NVIDIA GPU detected")
+distributed.worker - INFO - Run out-of-band function '_func_set_scheduler_as_nccl_root'
+distributed.core - INFO - Event loop was unresponsive in Scheduler for 5.26s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.comm.tcp - INFO - Connection closed before handshake completed
+distributed.comm.tcp - INFO - Connection closed before handshake completed
+distributed.comm.tcp - INFO - Connection closed before handshake completed
+distributed.comm.tcp - INFO - Connection closed before handshake completed
+distributed.worker - INFO - Run out-of-band function '_func_init_all'
+distributed.core - INFO - Event loop was unresponsive in Worker for 3.02s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.worker - INFO - Run out-of-band function '_func_destroy_all'
+distributed.worker - INFO - Run out-of-band function '_func_destroy_scheduler_session'
+distributed.worker - WARNING -  Compute Failed
+Function:  _transform_func
+args:      (PCAMG(),             0    1    2    3    4    ...  571  572  573       574       575
+0      0.031250  0.0  0.0  0.0  0.0  ...  0.0  0.0  0.0  0.031250  0.031250
+1      0.029412  0.0  0.0  0.0  0.0  ...  0.0  0.0  0.0  0.029412  0.029412
+2      0.030303  0.0  0.0  0.0  0.0  ...  0.0  0.0  0.0  0.030303  0.030303
+3      0.030303  0.0  0.0  0.0  0.0  ...  0.0  0.0  0.0  0.030303  0.030303
+4      0.028571  0.0  0.0  0.0  0.0  ...  0.0  0.0  0.0  0.028571  0.028571
+...         ...  ...  ...  ...  ...  ...  ...  ...  ...       ...       ...
+59995  0.028571  0.0  0.0  0.0  0.0  ...  0.0  0.0  0.0  0.028571  0.028571
+59996  0.029412  0.0  0.0  0.0  0.0  ...  0.0  0.0  0.0  0.029412  0.029412
+59997  0.030303  0.0  0.0  0.0  0.0  ...  0.0  0.0  0.0  0.030303  0.030303
+59998  0.031250  0.0  0.0  0.0  0.0  ...  0.0  0.0  0.0  0.031250  0.031250
+59999  0.027778  0.0  0.0  0.0  0.0  ...  0.0  0.0  0.0  0.027778  0.027778
 
-2 GPUs:
-Wed Jul 14 15:45:38 2021: Initializing...
-Wed Jul 14 15:45:38 2021: Successfully loaded all data sets!
-Wed Jul 14 15:45:39 2021: Transferring CPU->GPU...
-Wed Jul 14 15:57:29 2021: Successfully transferred!
-Wed Jul 14 15:57:29 2021: Implementing PCA Clustering with Rapids...
-Total explained variance: 49.599893793880334
-Wed Jul 14 15:57:30 2021: Finished PCA Clustering with Rapids in: 1.35 seconds!
+[60000 rows x 576 columns])
+kwargs:    {}
+Exception: AttributeError()
 
-3 GPUs:
-Wed Jul 14 15:57:36 2021: Initializing...
-Wed Jul 14 15:57:36 2021: Successfully loaded all data sets!
-Wed Jul 14 15:57:37 2021: Transferring CPU->GPU...
-Wed Jul 14 16:09:27 2021: Successfully transferred!
-Wed Jul 14 16:09:27 2021: Implementing PCA Clustering with Rapids...
-Total explained variance: 49.599893793880334
-Wed Jul 14 16:09:28 2021: Finished PCA Clustering with Rapids in: 1.35 seconds!
-
-4 GPUs:
-Wed Jul 14 16:09:34 2021: Initializing...
-Wed Jul 14 16:09:34 2021: Successfully loaded all data sets!
-Wed Jul 14 16:09:35 2021: Transferring CPU->GPU...
-Wed Jul 14 16:21:25 2021: Successfully transferred!
-Wed Jul 14 16:21:25 2021: Implementing PCA Clustering with Rapids...
-Total explained variance: 49.599893793880334
-Wed Jul 14 16:21:27 2021: Finished PCA Clustering with Rapids in: 1.39 seconds!
-
-5 GPUs:
-Wed Jul 14 16:21:32 2021: Initializing...
-Wed Jul 14 16:21:33 2021: Successfully loaded all data sets!
-Wed Jul 14 16:21:33 2021: Transferring CPU->GPU...
-Wed Jul 14 16:33:23 2021: Successfully transferred!
-Wed Jul 14 16:33:23 2021: Implementing PCA Clustering with Rapids...
-Total explained variance: 49.599893793880334
-Wed Jul 14 16:33:24 2021: Finished PCA Clustering with Rapids in: 1.41 seconds!
-
-6 GPUs:
-Wed Jul 14 16:33:30 2021: Initializing...
-Wed Jul 14 16:33:31 2021: Successfully loaded all data sets!
-Wed Jul 14 16:33:31 2021: Transferring CPU->GPU...
-Wed Jul 14 16:45:22 2021: Successfully transferred!
-Wed Jul 14 16:45:22 2021: Implementing PCA Clustering with Rapids...
-Total explained variance: 49.599893793880334
-Wed Jul 14 16:45:23 2021: Finished PCA Clustering with Rapids in: 1.37 seconds!
+Traceback (most recent call last):
+  File "pca_init.py", line 101, in <module>
+    r_rt, r_rv = rapids_pca(cp.array(normalized_train_pca), cp.array(normalized_val_pca), npartitions, client)
+  File "pca_init.py", line 56, in rapids_pca
+    reduced_train = cp.array(pca.transform(d_ntpca))
+  File "/sw/summit/ums/gen119/nvrapids_0.18_gcc_7.4.0/lib/python3.7/site-packages/cuml/dask/decomposition/pca.py", line 210, in transform
+    delayed=delayed)
+  File "/sw/summit/ums/gen119/nvrapids_0.18_gcc_7.4.0/lib/python3.7/site-packages/cuml/dask/common/base.py", line 339, in _transform
+    **kwargs)
+  File "/sw/summit/ums/gen119/nvrapids_0.18_gcc_7.4.0/lib/python3.7/site-packages/cuml/dask/common/base.py", line 310, in _run_parallel_func
+    output = dask.dataframe.from_delayed(preds)
+  File "/sw/summit/ums/gen119/nvrapids_0.18_gcc_7.4.0/lib/python3.7/site-packages/dask/dataframe/io/io.py", line 586, in from_delayed
+    meta = delayed(make_meta)(dfs[0]).compute()
+  File "/sw/summit/ums/gen119/nvrapids_0.18_gcc_7.4.0/lib/python3.7/site-packages/dask/base.py", line 167, in compute
+    (result,) = compute(self, traverse=False, **kwargs)
+  File "/sw/summit/ums/gen119/nvrapids_0.18_gcc_7.4.0/lib/python3.7/site-packages/dask/base.py", line 452, in compute
+    results = schedule(dsk, keys, **kwargs)
+  File "/sw/summit/ums/gen119/nvrapids_0.18_gcc_7.4.0/lib/python3.7/site-packages/distributed/client.py", line 2725, in get
+    results = self.gather(packed, asynchronous=asynchronous, direct=direct)
+  File "/sw/summit/ums/gen119/nvrapids_0.18_gcc_7.4.0/lib/python3.7/site-packages/distributed/client.py", line 1992, in gather
+    asynchronous=asynchronous,
+  File "/sw/summit/ums/gen119/nvrapids_0.18_gcc_7.4.0/lib/python3.7/site-packages/distributed/client.py", line 833, in sync
+    self.loop, func, *args, callback_timeout=callback_timeout, **kwargs
+  File "/sw/summit/ums/gen119/nvrapids_0.18_gcc_7.4.0/lib/python3.7/site-packages/distributed/utils.py", line 340, in sync
+    raise exc.with_traceback(tb)
+  File "/sw/summit/ums/gen119/nvrapids_0.18_gcc_7.4.0/lib/python3.7/site-packages/distributed/utils.py", line 324, in f
+    result[0] = yield future
+  File "/sw/summit/ums/gen119/nvrapids_0.18_gcc_7.4.0/lib/python3.7/site-packages/tornado/gen.py", line 762, in run
+    value = future.result()
+  File "/sw/summit/ums/gen119/nvrapids_0.18_gcc_7.4.0/lib/python3.7/site-packages/distributed/client.py", line 1851, in _gather
+    raise exception.with_traceback(traceback)
+  File "/sw/summit/ums/gen119/nvrapids_0.18_gcc_7.4.0/lib/python3.7/site-packages/cuml/dask/common/base.py", line 431, in _transform_func
+    return model.transform(data, **kwargs)
+  File "/sw/summit/ums/gen119/nvrapids_0.18_gcc_7.4.0/lib/python3.7/site-packages/cuml/internals/api_decorators.py", line 587, in inner_get
+    ret_val = func(*args, **kwargs)
+  File "cuml/decomposition/pca.pyx", line 684, in cuml.decomposition.pca.PCA.transform
+  File "cuml/common/base.pyx", line 290, in cuml.common.base.Base.__getattr__
+AttributeError
+distributed.scheduler - INFO - Remove client Client-5312ece2-eb17-11eb-a198-70e28414420d
+distributed.scheduler - INFO - Remove client Client-5312ece2-eb17-11eb-a198-70e28414420d
+distributed.scheduler - INFO - Close client connection: Client-5312ece2-eb17-11eb-a198-70e28414420d
+Could not read jskill result from pmix server
+Could not read jskill result from pmix server
 
 ------------------------------------------------------------
-Sender: LSF System <lsfadmin@batch2>
-Subject: Job 1156425: <pca> in cluster <summit> Done
+Sender: LSF System <lsfadmin@batch4>
+Subject: Job 1186736: <pca> in cluster <summit> Exited
 
-Job <pca> was submitted from host <login5> by user <arjun2612> in cluster <summit> at Wed Jul 14 15:32:42 2021
-Job was executed on host(s) <1*batch2>, in queue <batch>, as user <arjun2612> in cluster <summit> at Wed Jul 14 15:32:57 2021
-                            <42*f08n02>
+Job <pca> was submitted from host <login4> by user <arjun2612> in cluster <summit> at Thu Jul 22 14:03:04 2021
+Job was executed on host(s) <1*batch4>, in queue <batch>, as user <arjun2612> in cluster <summit> at Thu Jul 22 14:04:15 2021
+                            <42*a10n15>
 </ccs/home/arjun2612> was used as the home directory.
 </gpfs/alpine/scratch/arjun2612/gen150/ORNL_Coding/Code/pca> was used as the working directory.
-Started at Wed Jul 14 15:32:57 2021
-Terminated at Wed Jul 14 16:45:26 2021
-Results reported at Wed Jul 14 16:45:26 2021
+Started at Thu Jul 22 14:04:15 2021
+Terminated at Thu Jul 22 14:09:33 2021
+Results reported at Thu Jul 22 14:09:33 2021
 
 The output (if any) is above this job summary.
 
