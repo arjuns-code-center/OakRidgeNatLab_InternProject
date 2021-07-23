@@ -1,0 +1,49 @@
+#!/bin/bash
+# Begin LSF directives
+#BSUB -P gen150
+#BSUB -J pca
+#BSUB -o smc2_multi_gpu.txt
+#BSUB -alloc_flags "gpumps smt4 NVME"
+#BSUB -W 0:15
+#BSUB -nnodes 1
+# End LSF directives and begin shell commands
+
+PROJ_ID='gen150'
+
+SCHEDULER_DIR=$MEMBERWORK/$PROJ_ID/dask
+WORKER_DIR=/mnt/bb/$USER
+
+if [ ! -d "$SCHEDULER_DIR" ]
+then
+    mkdir $SCHEDULER_DIR
+fi
+
+SCHEDULER_FILE=$SCHEDULER_DIR/my-scheduler.json
+
+echo 'Running scheduler'
+jsrun --nrs 1 --tasks_per_rs 1 --cpu_per_rs 1 --smpiargs="-disable_gpu_hooks" \
+      dask-scheduler --interface ib0 \
+                     --scheduler-file $SCHEDULER_FILE \
+                     --no-dashboard --no-show &
+
+#Wait for the dask-scheduler to start
+sleep 10
+
+jsrun --rs_per_host 6 --tasks_per_rs 1 --cpu_per_rs 1 --gpu_per_rs 1 --smpiargs="-disable_gpu_hooks" \
+      dask-cuda-worker --nthreads 1 --memory-limit 82GB --device-memory-limit 16GB --rmm-pool-size=15GB \
+                       --death-timeout 60  --interface ib0 --scheduler-file $SCHEDULER_FILE --local-directory $WORKER_DIR \
+                       --no-dashboard &
+
+#Wait for WORKERS
+sleep 10
+
+WORKERS=6
+
+python -u pca_init.py --schedulerfile $SCHEDULER_FILE --npartitions $WORKERS --dataset 'SARSMERSCOV2'
+
+wait
+
+#clean DASK files
+rm -fr $SCHEDULER_DIR
+
+echo "Done!"
