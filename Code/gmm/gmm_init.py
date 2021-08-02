@@ -1,12 +1,8 @@
 import numpy as np
-import cupy as cp
-#import pandas as pd
 import time, argparse
 from sklearn.preprocessing import normalize
 from sklearn.mixture import GaussianMixture as sk_gmm
 from sklearn.decomposition import PCA as sk_PCA
-#from dask.distributed import Client
-#import cudf, dask, dask_cudf
 
 args = argparse.ArgumentParser()
 args.add_argument('--dataset', type=str, help='type of data loading in')
@@ -39,27 +35,6 @@ def sklearn_gmm(normalized_train_pca, normalized_val_pca, nc):
     sk_diff = round(end - start, 2)
     
     print(str(time.ctime()) + ": Finished GMM Clustering with Sklearn in " + str(sk_diff) + " seconds!")
-    return gmm_predicted, reduced_val
-
-def pyro_gmm(normalized_train_pca, normalized_val_pca, nc):    
-    reduced_train, reduced_val = implementPCA(normalized_train_pca, normalized_val_pca)
-    
-    print(str(time.ctime()) + ": Implementing GMM Clustering with Pyro...")    
-    gmm = sk_gmm(n_components=nc, covariance_type='full') # change to Pyro PCA version
-    gmm.fit(reduced_train)
-    runtimes = np.array([])
-        
-    for i in range(10):
-        start = time.time()
-        gmm_predicted = cp.asnumpy(cp.array(gmm.predict(reduced_val)))
-        end = time.time()
-        p_diff = end - start
-
-        runtimes = np.append(runtimes, p_diff)
-
-    avg_runtime = round(sum(runtimes[3:]) / len(runtimes[3:]), 2)
-    
-    print(str(time.ctime()) + ": Finished GMM Clustering with Pyro in " + str(avg_runtime) + " seconds!")
     return gmm_predicted, reduced_val
 
 print(str(time.ctime()) + ": Initializing...")
@@ -101,13 +76,7 @@ sk_gmm_labels, sk_rv = sklearn_gmm(normalized_train_pca, normalized_val_pca, ncl
 accuracy = (sum(sk_gmm_labels == l) / len(l)) * 100
 print('Accuracy: {}'.format(accuracy))
 
-# r_gmm_labels, r_rv = pyro_gmm(normalized_train_pca, normalized_val_pca, nclusters)
-# accuracy = (sum(r_gmm_labels == l) / len(l)) * 100
-# print('Accuracy: {}'.format(accuracy))
-
 if datatype == 'SARSMERSCOV2':
     np.savez('smc2_sk_clusterfiles.npz', redval=sk_rv, pred_labels=sk_gmm_labels, lv=label_validation, onehotmax=l)
-    #np.savez('smc2_r_clusterfiles.npz', redval=r_rv, pred_labels=r_gmm_labels, lv=label_validation, onehotmax=l)
 elif datatype == 'HEA':
     np.savez('hea_sk_clusterfiles.npz', redval=sk_rv, pred_labels=sk_gmm_labels, lv=label_validation, onehotmax=l)
-    #np.savez('hea_r_clusterfiles.npz', redval=r_rv, pred_labels=r_gmm_labels,lv=label_validation, onehotmax=l)
