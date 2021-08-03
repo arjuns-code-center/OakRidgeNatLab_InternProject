@@ -1,3 +1,4 @@
+Scikit-Learn GMM (CPU):
 SARSMERSCOV2 Dataset:
 Warning: OMP_NUM_THREADS=16 is greater than available PU's
 Thu Jul 29 11:50:13 2021: Initializing...
@@ -32,6 +33,50 @@ Job was executed on host(s) <1*batch2>, in queue <batch>, as user <arjun2612> in
 Started at Thu Jul 29 11:49:57 2021
 Terminated at Thu Jul 29 11:50:22 2021
 Results reported at Thu Jul 29 11:50:22 2021
+
+The output (if any) is above this job summary.
+
+
+The following have been reloaded with a version change:
+  1) cuda/10.1.243 => cuda/10.2.89
+
+Tensorflow GMM (GPU):
+SARSMERSCOV2 Dataset:
+Tue Aug  3 10:22:26 2021: Initializing...
+Tue Aug  3 10:22:27 2021: Successfully loaded all data sets!
+Tue Aug  3 10:22:27 2021: Implementing PCA Clustering with Sklearn...
+Total explained variance: 49.59989379388254
+Tue Aug  3 10:22:30 2021: Finished PCA Clustering with Sklearn!
+Tue Aug  3 10:22:31 2021: Creating Model...
+Tue Aug  3 10:22:31 2021: Model Created Successfully!
+Tue Aug  3 10:22:31 2021: Implementing GMM Clustering with Tensorflow...
+Tue Aug  3 10:22:47 2021: Finished GMM Clustering with Tensorflow in 15.48 seconds!
+Accuracy: 32.72666666666667
+
+HEA Dataset:
+Tue Aug  3 10:22:51 2021: Initializing...
+Tue Aug  3 10:22:51 2021: Successfully loaded all data sets!
+Tue Aug  3 10:22:51 2021: Implementing PCA Clustering with Sklearn...
+Total explained variance: 17.490930908935606
+Tue Aug  3 10:22:51 2021: Finished PCA Clustering with Sklearn!
+Tue Aug  3 10:22:52 2021: Creating Model...
+Tue Aug  3 10:22:52 2021: Model Created Successfully!
+Tue Aug  3 10:22:52 2021: Implementing GMM Clustering with Tensorflow...
+Tue Aug  3 10:22:57 2021: Finished GMM Clustering with Tensorflow in 4.09 seconds!
+Accuracy: 17.9
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@batch1>
+Subject: Job 1251150: <GMM> in cluster <summit> Done
+
+Job <GMM> was submitted from host <login3> by user <arjun2612> in cluster <summit> at Tue Aug  3 10:21:40 2021
+Job was executed on host(s) <1*batch1>, in queue <batch>, as user <arjun2612> in cluster <summit> at Tue Aug  3 10:22:05 2021
+                            <42*h50n15>
+</ccs/home/arjun2612> was used as the home directory.
+</gpfs/alpine/scratch/arjun2612/gen150/ORNL_Coding/Code/gmm> was used as the working directory.
+Started at Tue Aug  3 10:22:05 2021
+Terminated at Tue Aug  3 10:22:58 2021
+Results reported at Tue Aug  3 10:22:58 2021
 
 The output (if any) is above this job summary.
 
